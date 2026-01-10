@@ -1,7 +1,8 @@
 """
 dashboard.py
-
-Professional Control Room UI for ResQ Drone System
+ResQ Drone – Futuristic Tactical Command Dashboard
+Theme: Cyberpunk HUD / Glassmorphism
+(FINAL FIXED LAYOUT VERSION)
 """
 
 def get_dashboard_html() -> str:
@@ -10,136 +11,275 @@ def get_dashboard_html() -> str:
 <html>
 <head>
 <meta charset="UTF-8">
-<title>ResQ Drone – Control Room</title>
-<meta http-equiv="refresh" content="2">
+<title>ResQ Drone | Tactical Command</title>
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
+
+:root {
+    --bg-color: #05070a;
+    --card-bg: rgba(15, 23, 42, 0.6);
+    --neon-cyan: #22d3ee;
+    --neon-red: #f43f5e;
+    --neon-yellow: #fbbf24;
+    --neon-green: #10b981;
+    --border-color: rgba(34, 211, 238, 0.2);
+}
+
+/* 🔥 FIX 1: Proper vertical layout */
 body {
     margin: 0;
-    background: #0b0f14;
-    color: #e5e7eb;
-    font-family: Arial, sans-serif;
+    background: var(--bg-color);
+    color: #f8fafc;
+    font-family: 'JetBrains Mono', monospace;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background-image:
+        radial-gradient(circle at 50% 50%, rgba(34, 211, 238, 0.05) 0%, transparent 80%);
 }
 
+/* --- HEADER --- */
 header {
-    padding: 15px 30px;
-    background: #020617;
-    border-bottom: 2px solid #1e293b;
-    font-size: 22px;
-    color: #38bdf8;
+    padding: 20px 40px;
+    background: rgba(2, 6, 23, 0.85);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    letter-spacing: 2px;
 }
 
+header .title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--neon-cyan);
+    text-shadow: 0 0 10px rgba(34, 211, 238, 0.5);
+}
+
+header .system-time {
+    font-size: 12px;
+    color: rgba(255,255,255,0.4);
+}
+
+/* 🔥 FIX 2: Main grows naturally */
 .main {
+    flex: 1;
     display: grid;
-    grid-template-columns: 2.5fr 1fr;
-    gap: 15px;
-    padding: 15px;
+    grid-template-columns: 2.8fr 1fr;
+    gap: 20px;
+    padding: 20px;
+    overflow: hidden;
 }
 
-.feed {
-    background: #020617;
-    border-radius: 10px;
-    padding: 10px;
+/* --- FEED CONTAINER --- */
+.feed-container {
+    position: relative;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.feed img {
+.feed-container::after {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--neon-cyan);
+    box-shadow: 0 0 15px var(--neon-cyan);
+    animation: scan 4s linear infinite;
+    opacity: 0.5;
+}
+
+@keyframes scan {
+    0% { top: 0%; }
+    100% { top: 100%; }
+}
+
+.feed-container img {
     width: 100%;
-    max-height: 70vh;
+    height: 100%;
     object-fit: contain;
-    border-radius: 8px;
 }
 
+/* --- SIDEBAR --- */
 .sidebar {
-    background: #020617;
-    border-radius: 10px;
-    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
     overflow-y: auto;
-    max-height: 75vh;
 }
 
+.section-title {
+    font-size: 12px;
+    text-transform: uppercase;
+    color: var(--neon-cyan);
+    letter-spacing: 3px;
+    opacity: 0.8;
+}
+
+/* --- VICTIM CARDS --- */
 .card {
-    background: #020617;
-    border: 2px solid #1e293b;
-    border-left-width: 6px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-left: 4px solid transparent;
     border-radius: 8px;
-    padding: 10px;
-    margin-bottom: 10px;
-    font-size: 14px;
+    padding: 14px;
+    font-size: 13px;
 }
 
-.high { border-left-color: #ef4444; }
-.medium { border-left-color: #facc15; }
-.low { border-left-color: #22c55e; }
+.high { border-left-color: var(--neon-red); }
+.medium { border-left-color: var(--neon-yellow); }
+.low { border-left-color: var(--neon-green); }
 
-.footer {
-    background: #020617;
+/* --- TACTICAL MAP --- */
+.map-container {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
     padding: 15px;
-    border-top: 2px solid #1e293b;
-    font-size: 16px;
-    text-align: center;
-    color: #f87171;
+    display: flex;
+    justify-content: center;
 }
+
+.map-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(6, 1fr);
+    gap: 4px;
+    width: 240px;
+    height: 240px;
+}
+
+.cell {
+    border: 1px solid rgba(34, 211, 238, 0.1);
+    background: rgba(0,0,0,0.35);
+    position: relative;
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 10px currentColor;
+}
+
+/* 🔥 FIX 3: Footer always visible */
+.footer {
+    min-height: 64px;
+    padding: 12px 20px;
+    background: rgba(2, 6, 23, 0.95);
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    letter-spacing: 2px;
+    text-align: center;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-thumb { background: var(--border-color); }
 </style>
 </head>
 
 <body>
 
-<header>🚨 ResQ Drone – Control Room</header>
+<header>
+    <div class="title">RESQ_COMMAND_CENTER_V4</div>
+    <div class="system-time" id="sysTime">--:--:--</div>
+</header>
 
 <div class="main">
-
-    <!-- LIVE FEED -->
-    <div class="feed">
-        <img src="/static/latest_annotated.jpg" onerror="this.src='/static/latest.jpg'">
+    <div class="feed-container">
+        <img id="feed" src="/static/latest_annotated.jpg">
+        <div style="position:absolute;top:10px;left:10px;background:#f43f5e;padding:2px 8px;font-size:10px;border-radius:4px;">
+            LIVE FEED
+        </div>
     </div>
 
-    <!-- VICTIM LIST -->
-    <div class="sidebar" id="victimList">
-        Loading victims...
-    </div>
+    <div class="sidebar">
+        <div class="section-title">Detected Targets</div>
+        <div id="victimList"></div>
 
+        <div class="section-title">Tactical Grid</div>
+        <div class="map-container">
+            <div id="map" class="map-grid"></div>
+        </div>
+    </div>
 </div>
 
-<!-- RESCUE DECISION -->
 <div class="footer" id="decision">
-    Awaiting detection...
+    STANDBY: SYSTEM ANALYSIS IN PROGRESS
 </div>
 
 <script>
+function updateTime() {
+    const n = new Date();
+    sysTime.innerText =
+        "SYSTEM_TIME: " +
+        n.toTimeString().slice(0, 8);
+}
+setInterval(updateTime, 1000);
+
 async function loadStatus() {
-    const res = await fetch('/status');
+    feed.src = "/static/latest_annotated.jpg?t=" + Date.now();
+    const res = await fetch("/status");
     const data = await res.json();
 
-    const list = document.getElementById('victimList');
-    const decision = document.getElementById('decision');
-    list.innerHTML = "";
+    victimList.innerHTML = "";
+    if (map.children.length === 0) {
+        for (let i = 0; i < 36; i++) map.appendChild(document.createElement("div")).className = "cell";
+    }
+    [...map.children].forEach(c => c.innerHTML = "");
 
     if (!data.victims || data.victims.length === 0) {
-        list.innerHTML = "<p>No victims detected</p>";
-        decision.innerText = "No rescue required";
+        decision.innerText = "AREA_CLEAR: NO RESCUE REQUIRED";
+        decision.style.color = "var(--neon-green)";
         return;
     }
 
-    let highest = data.victims[0];
+    let active = data.victims.filter(v => !v.rescued);
+    let highest = active[0];
 
     data.victims.forEach(v => {
-        const div = document.createElement('div');
+        const div = document.createElement("div");
         div.className = "card " + v.priority.toLowerCase();
         div.innerHTML = `
-            <strong>Victim ID:</strong> ${v.id}<br>
-            <strong>Priority:</strong> ${v.priority}<br>
-            <strong>Grid:</strong> [${v.grid}]<br>
-            <strong>Risk:</strong> ${v.risk_score}
-        `;
-        list.appendChild(div);
+            <strong>ID ${v.id}</strong>
+            <div style="font-size:11px;opacity:.6">
+                ${v.priority} | ${v.pose} | Grid ${v.grid}
+            </div>`;
+        victimList.appendChild(div);
 
-        if (v.priority === "HIGH") highest = v;
+        if (v.grid) {
+            const idx = (v.grid[0]-1)*6 + (v.grid[1]-1);
+            if (map.children[idx]) {
+                const d = document.createElement("div");
+                d.className = "dot";
+                d.style.color =
+                    v.priority === "HIGH" ? "var(--neon-red)" :
+                    v.priority === "MEDIUM" ? "var(--neon-yellow)" :
+                    "var(--neon-green)";
+                d.style.background = "currentColor";
+                map.children[idx].appendChild(d);
+            }
+        }
     });
 
     decision.innerHTML =
-        "🚑 <strong>RESCUE FIRST:</strong> Victim ID " +
-        highest.id +
-        " (" + highest.priority + ", Grid " + highest.grid + ")";
+        `<span style="color:var(--neon-red);font-weight:bold">
+        CRITICAL ACTION:
+        </span>&nbsp;DEPLOY TO ID_${highest.id} [GRID ${highest.grid}]`;
 }
 
 loadStatus();
@@ -149,4 +289,3 @@ setInterval(loadStatus, 2000);
 </body>
 </html>
 """
-

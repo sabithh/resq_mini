@@ -41,7 +41,8 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
+  flutter_native_splash: ^2.4.0
+  flutter_launcher_icons: "^0.13.1"
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your
@@ -90,3 +91,20 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+flutter_native_splash:
+  color: "#000000"              # Pure black to match your theme
+  image: assets/splash_icon.png # Your drone logo path
+  
+  android_12:
+    color: "#000000"            # Required for newer Android versions
+    image: assets/splash_icon.png
+    
+  fullscreen: true
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/splash_icon.png"
+  min_sdk_android: 21
+  adaptive_icon_background: "#000000" # Matches the black background
+  adaptive_icon_foreground: "assets/splash_icon.png"
