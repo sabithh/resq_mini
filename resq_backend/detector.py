@@ -5,8 +5,8 @@ from ultralytics import YOLO
 class Detector:
     def __init__(self, conf: float = 0.3):
         self.conf = conf
-        self.detector = YOLO("yolov8s.pt")          # PERSON DETECTION
-        self.pose_model = YOLO("yolov8s-pose.pt")  # POSE ONLY
+        self.detector = YOLO("yolov8m.pt")          # PERSON DETECTION
+        self.pose_model = YOLO("yolov8m-pose.pt")  # POSE ONLY
         print("[Detector] Detection + Pose pipeline loaded")
 
     def detect(self, image: np.ndarray) -> List[Dict]:
