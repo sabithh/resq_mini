@@ -1,10 +1,11 @@
 """
 telegram_alert.py
 
-Telegram alert helper for ResQ backend
-- Sends victim image (annotated / cropped)
-- Inline response buttons
-- Demo GPS location link
+FINAL FIXED VERSION
+- Correct callback format
+- Buttons stay after "On the Way"
+- Buttons removed only after "Rescued / False"
+- Image ALWAYS sent
 """
 
 import requests
@@ -12,10 +13,10 @@ import json
 from datetime import datetime
 
 # --------------------------------------------------
-# TELEGRAM CONFIG (HARD-CODED)
+# TELEGRAM CONFIG
 # --------------------------------------------------
 
-BOT_TOKEN ="8492000668:AAFBC8eGDbnuK3GgpF1Jx8juk2kOGp_tCps"
+BOT_TOKEN = "8492000668:AAFBC8eGDbnuK3GgpF1Jx8juk2kOGp_tCps"
 CHAT_ID = "-5114857613"
 
 API = f"https://api.telegram.org/bot{BOT_TOKEN}"
@@ -25,31 +26,24 @@ API = f"https://api.telegram.org/bot{BOT_TOKEN}"
 # --------------------------------------------------
 
 def grid_to_demo_location(grid):
-    """
-    Convert grid position to demo GPS coordinates.
-    (Demo only – replace with real GPS later)
-    """
     base_lat = 12.9716
     base_lon = 77.5946
-
     try:
-        row, col = grid
-        lat = base_lat + (row - 3) * 0.001
-        lon = base_lon + (col - 3) * 0.001
-        return round(lat, 6), round(lon, 6)
+        r, c = grid
+        return round(base_lat + (r - 3) * 0.001, 6), round(base_lon + (c - 3) * 0.001, 6)
     except Exception:
         return base_lat, base_lon
 
 # --------------------------------------------------
-# SEND TELEGRAM ALERT (FIXED CALLBACK FORMAT)
+# SEND TELEGRAM ALERT
 # --------------------------------------------------
 
 def send_telegram_alert(victim: dict, image_path: str) -> bool:
     """
     Sends Telegram alert with:
-    - Victim image
-    - Details
-    - Inline buttons (WORKING)
+    - Image
+    - Inline buttons
+    - CORRECT callback format
     """
 
     try:
@@ -67,11 +61,11 @@ def send_telegram_alert(victim: dict, image_path: str) -> bool:
             f"⚠️ *Priority:* *{priority}*\n"
             f"🧍 *Pose:* `{pose}`\n"
             f"📍 *Grid:* `{grid}`\n"
-            f"🗺️ [Open Location in Maps]({map_link})\n"
+            f"🗺️ [Open Location]({map_link})\n"
             f"🕒 *Time:* `{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}`"
         )
 
-        # 🔥 CALLBACK DATA USES ":" (MATCHES app.py)
+        # 🔥 IMPORTANT: ":" separator MUST match app.py
         keyboard = {
             "inline_keyboard": [
                 [
@@ -94,25 +88,25 @@ def send_telegram_alert(victim: dict, image_path: str) -> bool:
         }
 
         with open(image_path, "rb") as img:
-            response = requests.post(
+            res = requests.post(
                 f"{API}/sendPhoto",
+                files={"photo": img},
                 data={
                     "chat_id": CHAT_ID,
                     "caption": caption,
                     "parse_mode": "Markdown",
                     "reply_markup": json.dumps(keyboard)
                 },
-                files={"photo": img},
                 timeout=10
             )
 
-        if response.status_code != 200:
-            print("[Telegram] Failed to send:", response.text)
+        if res.status_code != 200:
+            print("[Telegram] SEND FAILED:", res.text)
             return False
 
-        print(f"[Telegram] Alert sent successfully | Victim ID {vid}")
+        print(f"[Telegram] Alert sent | Victim {vid}")
         return True
 
     except Exception as e:
-        print("[Telegram] Error:", e)
+        print("[Telegram] ERROR:", e)
         return False

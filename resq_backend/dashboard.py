@@ -1,8 +1,8 @@
 """
 dashboard.py
 ResQ Drone – Futuristic Tactical Command Dashboard
-Theme: Cyberpunk HUD / Glassmorphism
-(FINAL FIXED LAYOUT VERSION)
+Cyberpunk HUD / Glassmorphism
+FINAL WORKING VERSION (Rescuer-aware)
 """
 
 def get_dashboard_html() -> str:
@@ -26,7 +26,6 @@ def get_dashboard_html() -> str:
     --border-color: rgba(34, 211, 238, 0.2);
 }
 
-/* 🔥 FIX 1: Proper vertical layout */
 body {
     margin: 0;
     background: var(--bg-color);
@@ -35,35 +34,28 @@ body {
     display: flex;
     flex-direction: column;
     height: 100vh;
-    background-image:
-        radial-gradient(circle at 50% 50%, rgba(34, 211, 238, 0.05) 0%, transparent 80%);
 }
 
-/* --- HEADER --- */
 header {
-    padding: 20px 40px;
-    background: rgba(2, 6, 23, 0.85);
-    backdrop-filter: blur(10px);
+    padding: 18px 36px;
+    background: rgba(2, 6, 23, 0.9);
     border-bottom: 1px solid var(--border-color);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    letter-spacing: 2px;
 }
 
 header .title {
     font-size: 20px;
-    font-weight: 700;
     color: var(--neon-cyan);
-    text-shadow: 0 0 10px rgba(34, 211, 238, 0.5);
+    letter-spacing: 2px;
 }
 
 header .system-time {
     font-size: 12px;
-    color: rgba(255,255,255,0.4);
+    opacity: 0.4;
 }
 
-/* 🔥 FIX 2: Main grows naturally */
 .main {
     flex: 1;
     display: grid;
@@ -73,32 +65,12 @@ header .system-time {
     overflow: hidden;
 }
 
-/* --- FEED CONTAINER --- */
 .feed-container {
     position: relative;
     background: var(--card-bg);
     border: 1px solid var(--border-color);
     border-radius: 12px;
     overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.feed-container::after {
-    content: "";
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: var(--neon-cyan);
-    box-shadow: 0 0 15px var(--neon-cyan);
-    animation: scan 4s linear infinite;
-    opacity: 0.5;
-}
-
-@keyframes scan {
-    0% { top: 0%; }
-    100% { top: 100%; }
 }
 
 .feed-container img {
@@ -107,7 +79,6 @@ header .system-time {
     object-fit: contain;
 }
 
-/* --- SIDEBAR --- */
 .sidebar {
     display: flex;
     flex-direction: column;
@@ -117,13 +88,11 @@ header .system-time {
 
 .section-title {
     font-size: 12px;
-    text-transform: uppercase;
     color: var(--neon-cyan);
     letter-spacing: 3px;
-    opacity: 0.8;
+    opacity: 0.7;
 }
 
-/* --- VICTIM CARDS --- */
 .card {
     background: var(--card-bg);
     border: 1px solid var(--border-color);
@@ -137,7 +106,6 @@ header .system-time {
 .medium { border-left-color: var(--neon-yellow); }
 .low { border-left-color: var(--neon-green); }
 
-/* --- TACTICAL MAP --- */
 .map-container {
     background: var(--card-bg);
     border: 1px solid var(--border-color);
@@ -157,8 +125,8 @@ header .system-time {
 }
 
 .cell {
-    border: 1px solid rgba(34, 211, 238, 0.1);
     background: rgba(0,0,0,0.35);
+    border: 1px solid rgba(34,211,238,0.1);
     position: relative;
 }
 
@@ -169,13 +137,10 @@ header .system-time {
     position: absolute;
     top: 50%; left: 50%;
     transform: translate(-50%, -50%);
-    box-shadow: 0 0 10px currentColor;
 }
 
-/* 🔥 FIX 3: Footer always visible */
 .footer {
     min-height: 64px;
-    padding: 12px 20px;
     background: rgba(2, 6, 23, 0.95);
     border-top: 1px solid var(--border-color);
     display: flex;
@@ -183,12 +148,7 @@ header .system-time {
     justify-content: center;
     font-size: 14px;
     letter-spacing: 2px;
-    text-align: center;
 }
-
-/* Scrollbar */
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-thumb { background: var(--border-color); }
 </style>
 </head>
 
@@ -202,9 +162,6 @@ header .system-time {
 <div class="main">
     <div class="feed-container">
         <img id="feed" src="/static/latest_annotated.jpg">
-        <div style="position:absolute;top:10px;left:10px;background:#f43f5e;padding:2px 8px;font-size:10px;border-radius:4px;">
-            LIVE FEED
-        </div>
     </div>
 
     <div class="sidebar">
@@ -225,20 +182,24 @@ header .system-time {
 <script>
 function updateTime() {
     const n = new Date();
-    sysTime.innerText =
-        "SYSTEM_TIME: " +
-        n.toTimeString().slice(0, 8);
+    sysTime.innerText = "SYSTEM_TIME: " + n.toTimeString().slice(0,8);
 }
 setInterval(updateTime, 1000);
 
 async function loadStatus() {
     feed.src = "/static/latest_annotated.jpg?t=" + Date.now();
+
     const res = await fetch("/status");
     const data = await res.json();
 
     victimList.innerHTML = "";
+
     if (map.children.length === 0) {
-        for (let i = 0; i < 36; i++) map.appendChild(document.createElement("div")).className = "cell";
+        for (let i = 0; i < 36; i++) {
+            const c = document.createElement("div");
+            c.className = "cell";
+            map.appendChild(c);
+        }
     }
     [...map.children].forEach(c => c.innerHTML = "");
 
@@ -248,17 +209,34 @@ async function loadStatus() {
         return;
     }
 
-    let active = data.victims.filter(v => !v.rescued);
-    let highest = active[0];
+    // 🔥 Prioritize victims NOT rescued and NOT onway
+    const order = { HIGH:0, MEDIUM:1, LOW:2 };
+    const prioritized = data.victims
+        .filter(v => !v.rescued)
+        .sort((a,b) => (a.onway - b.onway) || (order[a.priority] - order[b.priority]));
+
+    const highest = prioritized[0];
 
     data.victims.forEach(v => {
         const div = document.createElement("div");
         div.className = "card " + v.priority.toLowerCase();
+
+        let statusHTML = "";
+        if (v.rescued) {
+            statusHTML = `<div style="color:#10b981;margin-top:6px;">✔️ RESCUED</div>`;
+        } else if (v.onway) {
+            statusHTML = `<div style="color:#fbbf24;margin-top:6px;">🚑 ${v.rescuer || "Responder"} ON THE WAY</div>`;
+        } else {
+            statusHTML = `<div style="color:#f43f5e;margin-top:6px;">❗ AWAITING RESPONSE</div>`;
+        }
+
         div.innerHTML = `
             <strong>ID ${v.id}</strong>
             <div style="font-size:11px;opacity:.6">
                 ${v.priority} | ${v.pose} | Grid ${v.grid}
-            </div>`;
+            </div>
+            ${statusHTML}
+        `;
         victimList.appendChild(div);
 
         if (v.grid) {
@@ -266,20 +244,45 @@ async function loadStatus() {
             if (map.children[idx]) {
                 const d = document.createElement("div");
                 d.className = "dot";
-                d.style.color =
-                    v.priority === "HIGH" ? "var(--neon-red)" :
-                    v.priority === "MEDIUM" ? "var(--neon-yellow)" :
-                    "var(--neon-green)";
-                d.style.background = "currentColor";
+                d.style.background =
+                    v.priority === "HIGH" ? "#f43f5e" :
+                    v.priority === "MEDIUM" ? "#fbbf24" :
+                    "#10b981";
                 map.children[idx].appendChild(d);
             }
         }
     });
 
-    decision.innerHTML =
-        `<span style="color:var(--neon-red);font-weight:bold">
-        CRITICAL ACTION:
-        </span>&nbsp;DEPLOY TO ID_${highest.id} [GRID ${highest.grid}]`;
+    let active = data.victims.filter(v => !v.rescued);
+    let onway = data.victims.filter(v => v.onway && !v.rescued);
+
+    if (active.length > 0) {
+        const highest = active[0];
+
+        decision.innerHTML = `
+            <span style="color:var(--neon-red);font-weight:bold">
+                CRITICAL ACTION:
+            </span>
+            DEPLOY TO ID_${highest.id} [GRID ${highest.grid}]
+        `;
+        decision.style.color = "var(--neon-red)";
+
+    } else if (onway.length > 0) {
+        decision.innerHTML = `
+            <span style="color:var(--neon-yellow);font-weight:bold">
+                RESCUE IN PROGRESS
+            </span>
+        `;
+        decision.style.color = "var(--neon-yellow)";
+
+    } else {
+        decision.innerHTML = `
+            <span style="color:var(--neon-green);font-weight:bold">
+                ALL TARGETS SECURED
+            </span>
+        `;
+        decision.style.color = "var(--neon-green)";
+    }
 }
 
 loadStatus();

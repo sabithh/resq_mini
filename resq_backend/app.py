@@ -1,26 +1,23 @@
 """
 app.py
 
-ResQ Backend – FINAL VERSION
+ResQ Backend – FINAL FIXED VERSION
 Telegram Long-Polling + Image + Video + Live Dashboard
 """
 
 from fastapi import FastAPI, File, UploadFile, HTTPException
-from fastapi.responses import FileResponse, HTMLResponse, StreamingResponse
+from fastapi.responses import HTMLResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 import uvicorn
 from pathlib import Path
 import cv2
 import numpy as np
-import uuid
 import shutil
 import time
 from datetime import datetime, timedelta
 import threading
 from threading import Lock
 from copy import deepcopy
-import os
-import json
 import requests
 
 from detector import Detector
@@ -35,16 +32,15 @@ from telegram_alert import send_telegram_alert
 # --------------------------------------------------
 
 BOT_TOKEN = "8492000668:AAFBC8eGDbnuK3GgpF1Jx8juk2kOGp_tCps"
+CHAT_ID = "-5114857613"
 TELEGRAM_API = f"https://api.telegram.org/bot{BOT_TOKEN}"
 telegram_offset = 0
-CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "-5114857613")
 
 # --------------------------------------------------
-# App setup
+# APP SETUP
 # --------------------------------------------------
 
 app = FastAPI(title="ResQ Backend API", version="FINAL")
-
 BASE_DIR = Path(__file__).parent
 STATIC_DIR = BASE_DIR / "static"
 VIDEO_DIR = BASE_DIR / "videos"
@@ -54,34 +50,150 @@ VIDEO_DIR.mkdir(exist_ok=True)
 
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
-# --------------------------------------------------
-# AI
-# --------------------------------------------------
-
+# Globals
 detector = Detector()
-
-# --------------------------------------------------
-# GLOBAL STATE
-# --------------------------------------------------
-
 latest_victims = []
 video_victims_timeline = []
-
-# Rescue tracking
-# key: (victim_id, (row, col))
 rescue_status = {}
-
-# Streaming
 latest_stream_frame = None
 frame_lock = Lock()
 streaming_active = False
 video_thread = None
-
-# Video file
 current_video_path = str(VIDEO_DIR / "current.mp4") if (VIDEO_DIR / "current.mp4").exists() else None
 
+# Telegram worker (defined below)
+def telegram_polling_worker():
+    global telegram_offset
+
+    print("[Telegram] Long polling started")
+
+    while True:
+        try:
+            resp = requests.get(
+                f"{TELEGRAM_API}/getUpdates",
+                params={"offset": telegram_offset, "timeout": 5},
+                timeout=10
+            ).json()
+
+            for update in resp.get("result", []):
+                telegram_offset = update["update_id"] + 1
+
+                if "callback_query" not in update:
+                    continue
+
+                query = update["callback_query"]
+                data = query.get("data", "")
+
+                try:
+                    action, vid, row, col = data.split(":")
+                    key = (int(vid), (int(row), int(col)))
+                except Exception:
+                    continue
+
+                if key not in rescue_status:
+                    rescue_status[key] = {
+                        "rescued": False,
+                        "onway": False,
+                        "rescuer": None,
+                        "last_alert": None
+                    }
+
+                # Use same logic as elsewhere
+                if action == "onway":
+                    rescue_status[key]["onway"] = True
+                    user = query["from"].get("first_name", "Responder")
+                    rescue_status[key]["rescuer"] = user
+
+                    # Announce
+                    requests.post(
+                        f"{TELEGRAM_API}/sendMessage",
+                        json={
+                            "chat_id": CHAT_ID,
+                            "text": f"🚑 *ON THE WAY*\n{user} is responding to Victim ID {vid}",
+                            "parse_mode": "Markdown"
+                        },
+                        timeout=5
+                    )
+
+                    # Update keyboard (remove onway)
+                    msg_id = query["message"]["message_id"]
+                    requests.post(
+                        f"{TELEGRAM_API}/editMessageReplyMarkup",
+                        json={
+                            "chat_id": CHAT_ID,
+                            "message_id": msg_id,
+                            "reply_markup": {
+                                "inline_keyboard": [
+                                    [
+                                        {"text": "✔️ Rescued", "callback_data": f"rescued:{vid}:{row}:{col}"}
+                                    ],
+                                    [
+                                        {"text": "❗ False Alarm", "callback_data": f"false:{vid}:{row}:{col}"}
+                                    ]
+                                ]
+                            }
+                        },
+                        timeout=5
+                    )
+
+                elif action == "rescued":
+                    rescue_status[key]["rescued"] = True
+                    rescue_status[key]["onway"] = False
+
+                    requests.post(
+                        f"{TELEGRAM_API}/sendMessage",
+                        json={
+                            "chat_id": CHAT_ID,
+                            "text": f"✅ *RESCUED*\nVictim ID {vid} rescue confirmed.",
+                            "parse_mode": "Markdown"
+                        },
+                        timeout=5
+                    )
+
+                    msg_id = query["message"]["message_id"]
+                    requests.post(
+                        f"{TELEGRAM_API}/editMessageReplyMarkup",
+                        json={
+                            "chat_id": CHAT_ID,
+                            "message_id": msg_id,
+                            "reply_markup": {"inline_keyboard": []}
+                        },
+                        timeout=5
+                    )
+
+                elif action == "false":
+                    rescue_status[key]["rescued"] = True
+
+                    requests.post(
+                        f"{TELEGRAM_API}/sendMessage",
+                        json={
+                            "chat_id": CHAT_ID,
+                            "text": f"❗ *FALSE ALARM*\nVictim ID {vid} marked false.",
+                            "parse_mode": "Markdown"
+                        },
+                        timeout=5
+                    )
+
+                    msg_id = query["message"]["message_id"]
+                    requests.post(
+                        f"{TELEGRAM_API}/editMessageReplyMarkup",
+                        json={
+                            "chat_id": CHAT_ID,
+                            "message_id": msg_id,
+                            "reply_markup": {"inline_keyboard": []}
+                        },
+                        timeout=5
+                    )
+
+        except Exception as e:
+            print("[Telegram] Poll error:", e)
+
+        time.sleep(1)
+
+threading.Thread(target=telegram_polling_worker, daemon=True).start()
+
 # --------------------------------------------------
-# DRAW ANNOTATIONS
+# IMAGE DETECTION
 # --------------------------------------------------
 
 def draw_dashboard(image, victims):
@@ -107,7 +219,6 @@ def draw_dashboard(image, victims):
 
 def crop_victim(image, bbox, victim_id):
     x1, y1, x2, y2 = bbox
-    # clamp coordinates
     x1 = max(0, int(x1))
     y1 = max(0, int(y1))
     x2 = max(0, int(x2))
@@ -124,145 +235,13 @@ def crop_victim(image, bbox, victim_id):
     cv2.imwrite(str(path), crop)
     return str(path)
 
-# --------------------------------------------------
-# TELEGRAM POLLING WORKER (🔥 CORE FIX)
-# --------------------------------------------------
-
-def telegram_polling_worker():
-    global telegram_offset
-
-    print("[Telegram] Long polling started")
-
-    while True:
-        try:
-            resp = requests.get(
-                f"{TELEGRAM_API}/getUpdates",
-                params={"offset": telegram_offset, "timeout": 5},
-                timeout=10
-            ).json()
-
-            for update in resp.get("result", []):
-                telegram_offset = update["update_id"] + 1
-
-                if "callback_query" not in update:
-                    continue
-
-                data = update["callback_query"]["data"]
-
-                try:
-                    action, vid, row, col = data.split(":")
-                    key = (int(vid), (int(row), int(col)))
-                except Exception:
-                    continue
-
-                if key not in rescue_status:
-                    rescue_status[key] = {
-                        "rescued": False,
-                        "onway": False,
-                        "last_alert": None
-                    }
-
-                elif action == "onway":
-                    rescue_status[key]["onway"] = True
-                    user = update["callback_query"].get("from", {}).get("first_name", "Responder")
-
-                    # Announce to group
-                    requests.post(
-                        f"{TELEGRAM_API}/sendMessage",
-                        json={
-                            "chat_id": CHAT_ID,
-                            "text": f"🚑 *ON THE WAY*\n{user} is responding to Victim ID {vid}",
-                            "parse_mode": "Markdown"
-                        },
-                        timeout=5
-                    )
-
-                    # 🔥 UPDATE BUTTONS (REMOVE ONLY 'ON THE WAY')
-                    msg_id = update["callback_query"]["message"]["message_id"]
-                    requests.post(
-                        f"{TELEGRAM_API}/editMessageReplyMarkup",
-                        json={
-                            "chat_id": CHAT_ID,
-                            "message_id": msg_id,
-                            "reply_markup": {
-                                "inline_keyboard": [
-                                    [
-                                        {
-                                            "text": "✔️ Rescued",
-                                            "callback_data": f"rescued:{vid}:{row}:{col}"
-                                        }
-                                    ],
-                                    [
-                                        {
-                                            "text": "❗ False Alarm",
-                                            "callback_data": f"false:{vid}:{row}:{col}"
-                                        }
-                                    ]
-                                ]
-                            }
-                        },
-                        timeout=5
-                    )
-
-                elif action == "rescued":
-                    rescue_status[key]["rescued"] = True
-                    print("[Telegram] RESCUED:", key)
-
-                    # Announce rescue in chat
-                    try:
-                        requests.post(
-                            f"{TELEGRAM_API}/sendMessage",
-                            json={
-                                "chat_id": CHAT_ID,
-                                "text": f"✅ *RESCUED*\nVictim ID {vid} rescue confirmed.",
-                                "parse_mode": "Markdown"
-                            },
-                            timeout=5
-                        )
-                    except Exception:
-                        pass
-
-                    # Optionally disable buttons on the original message so others can't click
-                    try:
-                        msg_id = update["callback_query"]["message"]["message_id"]
-                        requests.post(
-                            f"{TELEGRAM_API}/editMessageReplyMarkup",
-                            json={
-                                "chat_id": CHAT_ID,
-                                "message_id": msg_id,
-                                "reply_markup": json.dumps({"inline_keyboard": []})
-                            },
-                            timeout=5
-                        )
-                    except Exception:
-                        pass
-
-                elif action == "false":
-                    rescue_status[key]["rescued"] = True
-                    print("[Telegram] FALSE ALARM:", key)
-
-        except Exception as e:
-            print("[Telegram] Poll error:", e)
-
-        time.sleep(1)
-
-# 🔥 Start polling thread
-threading.Thread(target=telegram_polling_worker, daemon=True).start()
-
-# --------------------------------------------------
-# IMAGE DETECTION
-# --------------------------------------------------
-
 @app.post("/detect")
-async def detect_victims(file: UploadFile = File(...)):
-    global latest_victims, rescue_status
-    rescue_status.clear()
+async def detect_image(file: UploadFile = File(...)):
+    global latest_victims
 
     image = cv2.imdecode(np.frombuffer(await file.read(), np.uint8), cv2.IMREAD_COLOR)
     if image is None:
         raise HTTPException(400, "Invalid image")
-
-    cv2.imwrite(str(STATIC_DIR / "latest.jpg"), image)
 
     h, w = image.shape[:2]
     victims = []
@@ -279,16 +258,20 @@ async def detect_victims(file: UploadFile = File(...)):
     for v in victims:
         if v["priority"] in ["HIGH", "MEDIUM"]:
             key = (v["id"], tuple(v["grid"]))
-            entry = rescue_status.setdefault(key, {"rescued": False, "last_alert": None})
+            entry = rescue_status.setdefault(key, {
+                "rescued": False,
+                "onway": False,
+                "rescuer": None,
+                "last_alert": None
+            })
 
             if not entry["rescued"] and (
                 entry["last_alert"] is None or
                 (now - entry["last_alert"]) > timedelta(minutes=1)
             ):
                 crop_path = crop_victim(image, v["bbox_xyxy"], v["id"])
-                if crop_path:
-                    if send_telegram_alert(v, crop_path):
-                        entry["last_alert"] = now
+                if crop_path and send_telegram_alert(v, crop_path):
+                    entry["last_alert"] = now
 
     return {"count": len(victims), "victims": victims}
 
@@ -298,9 +281,8 @@ async def detect_victims(file: UploadFile = File(...)):
 
 @app.post("/upload-video")
 async def upload_video(file: UploadFile = File(...)):
-    global current_video_path, rescue_status, streaming_active
+    global current_video_path, streaming_active
     streaming_active = False
-    rescue_status.clear()
 
     path = VIDEO_DIR / "current.mp4"
     with open(path, "wb") as f:
@@ -310,13 +292,15 @@ async def upload_video(file: UploadFile = File(...)):
     return {"status": "uploaded"}
 
 # --------------------------------------------------
-# VIDEO WORKER
+# VIDEO WORKER (FPS AWARE)
 # --------------------------------------------------
 
 def video_worker():
     global streaming_active, latest_stream_frame, latest_victims
 
     cap = cv2.VideoCapture(current_video_path)
+    fps = cap.get(cv2.CAP_PROP_FPS)
+    delay = 1 / fps if fps > 0 else 0.03
 
     while streaming_active and cap.isOpened():
         ret, frame = cap.read()
@@ -335,7 +319,7 @@ def video_worker():
         with frame_lock:
             latest_stream_frame = frame.copy()
 
-        time.sleep(0.03)
+        time.sleep(delay)
 
     cap.release()
     streaming_active = False
@@ -347,6 +331,7 @@ def video_worker():
 @app.post("/start-stream")
 def start_stream():
     global streaming_active, video_thread
+
     if not current_video_path:
         raise HTTPException(400, "No video uploaded")
 
@@ -357,6 +342,16 @@ def start_stream():
     video_thread = threading.Thread(target=video_worker, daemon=True)
     video_thread.start()
     return {"status": "started"}
+
+@app.post("/restart-stream")
+def restart_stream():
+    global streaming_active, video_thread
+    streaming_active = False
+    time.sleep(0.2)
+    streaming_active = True
+    video_thread = threading.Thread(target=video_worker, daemon=True)
+    video_thread.start()
+    return {"status": "restarted"}
 
 @app.post("/stop-stream")
 def stop_stream():
@@ -377,6 +372,7 @@ def status():
         state = rescue_status.get(key, {})
         vv["rescued"] = state.get("rescued", False)
         vv["onway"] = state.get("onway", False)
+        vv["rescuer"] = state.get("rescuer")
         enriched.append(vv)
     return {"victims": enriched}
 
@@ -385,7 +381,7 @@ def dashboard():
     return get_dashboard_html()
 
 @app.get("/dashboard/video", response_class=HTMLResponse)
-def video_dashboard():
+def dashboard_video():
     return get_video_dashboard_html()
 
 # --------------------------------------------------
@@ -400,12 +396,13 @@ def video_stream():
                 if latest_stream_frame is None:
                     continue
                 _, jpg = cv2.imencode(".jpg", latest_stream_frame)
-            yield (b"--frame\r\nContent-Type: image/jpeg\r\n\r\n" +
-                   jpg.tobytes() + b"\r\n")
+            yield b"--frame\r\nContent-Type: image/jpeg\r\n\r\n" + jpg.tobytes() + b"\r\n"
             time.sleep(0.03)
 
-    return StreamingResponse(generate(),
-        media_type="multipart/x-mixed-replace; boundary=frame")
+    return StreamingResponse(
+        generate(),
+        media_type="multipart/x-mixed-replace; boundary=frame"
+    )
 
 # --------------------------------------------------
 # RUN

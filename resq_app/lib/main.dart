@@ -210,7 +210,7 @@ class _CameraHomeState extends State<CameraHome>
   late AnimationController _scanController;
 
   // ✅ FIXED BACKEND URL
-  static const String BACKEND_BASE_URL = 'http://192.168.1.7:8000';
+  static const String BACKEND_BASE_URL = 'http://192.168.1.2:8000';
   static const String BACKEND_IMAGE_URL = '$BACKEND_BASE_URL/detect';
   static const String BACKEND_VIDEO_URL = '$BACKEND_BASE_URL/upload-video';
 

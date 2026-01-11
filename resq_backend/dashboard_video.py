@@ -1,10 +1,10 @@
 """
 dashboard_video.py
 
-Video Streaming Control Dashboard for ResQ
-- Shows the uploaded video (MJPEG stream)
-- Operator-controlled playback
-- Upload / Play / Restart / Stop
+ResQ – Video + Image Control Dashboard
+- Faster MJPEG streaming
+- Upload video OR image
+- Send image for detection (no phone needed)
 """
 
 def get_video_dashboard_html() -> str:
@@ -13,7 +13,7 @@ def get_video_dashboard_html() -> str:
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>ResQ – Video Streaming Dashboard</title>
+<title>ResQ – Video & Image Control</title>
 
 <style>
 body {
@@ -62,13 +62,13 @@ header {
 
 .control-panel h3 {
     margin-top: 0;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     color: #38bdf8;
 }
 
 .control-panel input[type="file"] {
     width: 100%;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     color: #e5e7eb;
 }
 
@@ -76,31 +76,17 @@ header {
     width: 100%;
     padding: 12px;
     margin-bottom: 10px;
-    font-size: 16px;
+    font-size: 15px;
     border-radius: 6px;
     border: none;
     cursor: pointer;
 }
 
-.upload-btn {
-    background: #2563eb;
-    color: white;
-}
-
-.play-btn {
-    background: #16a34a;
-    color: white;
-}
-
-.restart-btn {
-    background: #f59e0b;
-    color: black;
-}
-
-.stop-btn {
-    background: #dc2626;
-    color: white;
-}
+.upload-btn { background: #2563eb; color: white; }
+.play-btn { background: #16a34a; color: white; }
+.restart-btn { background: #f59e0b; color: black; }
+.stop-btn { background: #dc2626; color: white; }
+.image-btn { background: #7c3aed; color: white; }
 
 .status-box {
     margin-top: 15px;
@@ -115,89 +101,87 @@ header {
 
 <body>
 
-<header>🎥 ResQ – Video Streaming Control Room</header>
+<header>🎥 ResQ – Video & Image Control Room</header>
 
 <div class="main">
 
-    <!-- VIDEO STREAM -->
+    <!-- LIVE STREAM -->
     <div class="video-panel">
-        <img src="/video-stream" alt="Live Video Stream">
+        <img id="stream" src="/video-stream" alt="Live Stream">
     </div>
 
     <!-- CONTROLS -->
     <div class="control-panel">
-        <h3>Video Controls</h3>
 
+        <h3>📹 Video Controls</h3>
         <input type="file" id="videoFile" accept="video/*">
-
         <button class="upload-btn" onclick="uploadVideo()">📤 Upload Video</button>
         <button class="play-btn" onclick="startStream()">▶️ Start Stream</button>
         <button class="restart-btn" onclick="restartStream()">🔁 Restart Video</button>
         <button class="stop-btn" onclick="stopStream()">⏹ Stop Stream</button>
 
-        <div class="status-box" id="status">
-            Status: Idle
-        </div>
+        <hr style="border:1px solid #1e293b; margin:15px 0;">
+
+        <h3>📸 Image Detection</h3>
+        <input type="file" id="imageFile" accept="image/*">
+        <button class="image-btn" onclick="sendImage()">🚀 Send Image</button>
+
+        <div class="status-box" id="status">Status: Idle</div>
     </div>
 
 </div>
 
 <script>
+function setStatus(text) {
+    document.getElementById("status").innerText = "Status: " + text;
+}
+
+// ---------------- VIDEO ----------------
+
 async function uploadVideo() {
-    const fileInput = document.getElementById("videoFile");
-    const file = fileInput.files[0];
+    const file = videoFile.files[0];
+    if (!file) return alert("Select a video");
 
-    if (!file) {
-        alert("Please select a video file");
-        return;
-    }
-
-    const formData = new FormData();
-    formData.append("file", file);
+    const fd = new FormData();
+    fd.append("file", file);
 
     setStatus("Uploading video...");
+    const res = await fetch("/upload-video", { method: "POST", body: fd });
 
-    const res = await fetch("/upload-video", {
-        method: "POST",
-        body: formData
-    });
-
-    if (res.ok) {
-        setStatus("Video uploaded. Ready to play.");
-    } else {
-        setStatus("Upload failed.");
-    }
+    setStatus(res.ok ? "Video uploaded" : "Upload failed");
 }
 
 async function startStream() {
     const res = await fetch("/start-stream", { method: "POST" });
-    if (res.ok) {
-        setStatus("Streaming video...");
-    } else {
-        setStatus("Failed to start stream.");
-    }
+    setStatus(res.ok ? "Streaming started" : "Start failed");
 }
 
 async function restartStream() {
     const res = await fetch("/restart-stream", { method: "POST" });
-    if (res.ok) {
-        setStatus("Video restarted from beginning.");
-    } else {
-        setStatus("Failed to restart video.");
-    }
+    setStatus(res.ok ? "Restarted" : "Restart failed");
 }
 
 async function stopStream() {
     const res = await fetch("/stop-stream", { method: "POST" });
-    if (res.ok) {
-        setStatus("Stream stopped.");
-    } else {
-        setStatus("Failed to stop stream.");
-    }
+    setStatus(res.ok ? "Stopped" : "Stop failed");
 }
 
-function setStatus(text) {
-    document.getElementById("status").innerText = "Status: " + text;
+// ---------------- IMAGE ----------------
+
+async function sendImage() {
+    const file = imageFile.files[0];
+    if (!file) return alert("Select an image");
+
+    const fd = new FormData();
+    fd.append("file", file);
+
+    setStatus("Sending image for detection...");
+    const res = await fetch("/detect", {
+        method: "POST",
+        body: fd
+    });
+
+    setStatus(res.ok ? "Image processed ✔️" : "Image failed ❌");
 }
 </script>
 
