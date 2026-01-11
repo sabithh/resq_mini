@@ -11,8 +11,8 @@ class Detector:
         - Filters non-human objects safely
         """
         self.conf = conf
-        self.detector = YOLO("yolov8s.pt")          # General detector
-        self.pose_model = YOLO("yolov8s-pose.pt")  # Pose model
+        self.detector = YOLO("yolov8m.pt")          # General detector
+        self.pose_model = YOLO("yolov8m-pose.pt")  # Pose model
         self.PERSON_CLASS_ID = 0                   # COCO: person
 
         print("[Detector] Stable human + pose pipeline loaded")
