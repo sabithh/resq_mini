@@ -66,7 +66,7 @@ class _SplashScreenState extends State<SplashScreen>
                     border: Border.all(color: Colors.cyanAccent, width: 2),
                     boxShadow: [
                       BoxShadow(
-                          color: Colors.cyanAccent.withOpacity(0.3),
+                          color: Colors.cyanAccent.withValues(alpha: 0.3),
                           blurRadius: 20,
                           spreadRadius: 5)
                     ],
@@ -83,7 +83,7 @@ class _SplashScreenState extends State<SplashScreen>
               const SizedBox(height: 10),
               Text('ESTABLISHING SECURE LINK...',
                   style: TextStyle(
-                      color: Colors.cyanAccent.withOpacity(0.6),
+                      color: Colors.cyanAccent.withValues(alpha: 0.6),
                       fontSize: 10, letterSpacing: 2)),
               const SizedBox(height: 50),
               SizedBox(

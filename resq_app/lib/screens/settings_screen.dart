@@ -59,7 +59,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         elevation: 0,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
-          child: Container(height: 1, color: Colors.cyanAccent.withOpacity(0.2)),
+          child: Container(height: 1, color: Colors.cyanAccent.withValues(alpha: 0.2)),
         ),
       ),
       body: SingleChildScrollView(
@@ -75,9 +75,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
               filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.05),
+                  color: Colors.white.withValues(alpha: 0.05),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.cyanAccent.withOpacity(0.3)),
+                  border: Border.all(color: Colors.cyanAccent.withValues(alpha: 0.3)),
                 ),
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                 child: TextField(
@@ -87,7 +87,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     border: InputBorder.none,
                     hintText: 'http://192.168.1.2:8000',
                     hintStyle: TextStyle(color: Colors.white24, fontSize: 12),
-                    prefixIcon: Icon(Icons.link, color: Colors.cyanAccent.withOpacity(0.5), size: 18),
+                    prefixIcon: Icon(Icons.link, color: Colors.cyanAccent.withValues(alpha: 0.5), size: 18),
                   ),
                 ),
               ),
@@ -138,7 +138,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Widget _sectionLabel(String text) => Text(text,
-    style: TextStyle(color: Colors.cyanAccent.withOpacity(0.6),
+    style: TextStyle(color: Colors.cyanAccent.withValues(alpha: 0.6),
         fontSize: 10, letterSpacing: 4, fontWeight: FontWeight.bold));
 
   Widget _actionBtn(String label, Color bg, Color fg, VoidCallback? onTap,

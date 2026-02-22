@@ -32,7 +32,7 @@ class _CameraHomeState extends State<CameraHome>
   String _statusMessage = 'SYSTEM READY';
   Color  _statusColor   = Colors.cyanAccent;
 
-  String _droneId = 'DRONE_1';
+  final String _droneId = 'DRONE_1';
 
   late AnimationController _scanController;
 
@@ -174,8 +174,8 @@ class _CameraHomeState extends State<CameraHome>
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
         decoration: BoxDecoration(
-          color: Colors.black.withOpacity(0.4),
-          border: Border.all(color: _statusColor.withOpacity(0.5)),
+          color: Colors.black.withValues(alpha: 0.4),
+          border: Border.all(color: _statusColor.withValues(alpha: 0.5)),
           borderRadius: BorderRadius.circular(15),
         ),
         child: Row(
@@ -183,16 +183,16 @@ class _CameraHomeState extends State<CameraHome>
           children: [
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(children: [
-                Text('$_droneId',
+                Text(_droneId,
                     style: TextStyle(
-                        color: Colors.cyanAccent.withOpacity(0.7),
+                        color: Colors.cyanAccent.withValues(alpha: 0.7),
                         fontSize: 10, letterSpacing: 2)),
                 if (_thermalMode) ...[
                   const SizedBox(width: 8),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                     decoration: BoxDecoration(
-                      color: Colors.amber.withOpacity(0.2),
+                      color: Colors.amber.withValues(alpha: 0.2),
                       border: Border.all(color: Colors.amber, width: 0.5),
                       borderRadius: BorderRadius.circular(4),
                     ),
@@ -223,7 +223,7 @@ class _CameraHomeState extends State<CameraHome>
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 20),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.05),
+          color: Colors.white.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(25),
         ),
         child: Row(
@@ -293,7 +293,7 @@ class _CameraHomeState extends State<CameraHome>
         Container(
           padding: const EdgeInsets.all(6),
           decoration: BoxDecoration(
-            color: active ? Colors.amber.withOpacity(0.2) : Colors.transparent,
+            color: active ? Colors.amber.withValues(alpha: 0.2) : Colors.transparent,
             shape: BoxShape.circle,
             border: Border.all(
               color: active ? Colors.amber : Colors.white30,
