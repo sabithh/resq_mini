@@ -58,21 +58,25 @@ def send_telegram_alert(victim: dict, image_path: str, drone_id: str = "DRONE_1"
             ]
         }
 
-        with open(image_path, "rb") as img:
-            res = requests.post(
-                f"{API}/sendPhoto",
-                files={"photo": img},
-                data={
-                    "chat_id":      CHAT_ID,
-                    "caption":      caption,
-                    "parse_mode":   "Markdown",
-                    "reply_markup": json.dumps(keyboard)
-                },
-                timeout=10
-            )
+        try:
+            with open(image_path, "rb") as img:
+                res = requests.post(
+                    f"{API}/sendPhoto",
+                    files={"photo": img},
+                    data={
+                        "chat_id":      CHAT_ID,
+                        "caption":      caption,
+                        "parse_mode":   "Markdown",
+                        "reply_markup": json.dumps(keyboard)
+                    },
+                    timeout=10
+                )
 
-        if res.status_code != 200:
-            print("[Telegram] SEND FAILED:", res.text)
+            if res.status_code != 200:
+                print("[Telegram] SEND FAILED:", res.text)
+                return False
+        except requests.exceptions.RequestException as e:
+            print(f"[Telegram] EXCEPTION (Network Offline?): {e}")
             return False
 
         print(f"[Telegram] Alert sent | {drone_id} Victim {vid}")

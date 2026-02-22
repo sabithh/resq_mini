@@ -17,6 +17,7 @@ Features:
 from fastapi import FastAPI, File, UploadFile, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse, StreamingResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from pathlib import Path
 import cv2
@@ -53,6 +54,15 @@ telegram_offset = 0
 # ──────────────────────────────────────────────────────
 
 app = FastAPI(title="ResQ Backend API", version="2.0")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 BASE_DIR   = Path(__file__).parent
 STATIC_DIR = BASE_DIR / "static"
 VIDEO_DIR  = BASE_DIR / "videos"
