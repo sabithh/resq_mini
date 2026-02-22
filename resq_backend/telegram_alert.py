@@ -1,29 +1,18 @@
 """
 telegram_alert.py
 
-FINAL FIXED VERSION
-- Correct callback format
-- Buttons stay after "On the Way"
-- Buttons removed only after "Rescued / False"
-- Image ALWAYS sent
+ResQ – Telegram Alert Module
+Updated: uses config.py for credentials, includes drone_id in callbacks.
 """
 
 import requests
 import json
 from datetime import datetime
 
-# --------------------------------------------------
-# TELEGRAM CONFIG
-# --------------------------------------------------
-
-BOT_TOKEN = "8492000668:AAFBC8eGDbnuK3GgpF1Jx8juk2kOGp_tCps"
-CHAT_ID = "-5114857613"
+from config import BOT_TOKEN, CHAT_ID
 
 API = f"https://api.telegram.org/bot{BOT_TOKEN}"
 
-# --------------------------------------------------
-# GRID → DEMO GPS LOCATION
-# --------------------------------------------------
 
 def grid_to_demo_location(grid):
     base_lat = 12.9716
@@ -34,30 +23,21 @@ def grid_to_demo_location(grid):
     except Exception:
         return base_lat, base_lon
 
-# --------------------------------------------------
-# SEND TELEGRAM ALERT
-# --------------------------------------------------
 
-def send_telegram_alert(victim: dict, image_path: str) -> bool:
-    """
-    Sends Telegram alert with:
-    - Image
-    - Inline buttons
-    - CORRECT callback format
-    """
-
+def send_telegram_alert(victim: dict, image_path: str, drone_id: str = "DRONE_1") -> bool:
     try:
-        vid = int(victim.get("id", 0))
-        grid = victim.get("grid", [0, 0])
+        vid      = int(victim.get("id", 0))
+        grid     = victim.get("grid", [0, 0])
         priority = victim.get("priority", "UNKNOWN")
-        pose = victim.get("pose", "unknown")
+        pose     = victim.get("pose", "unknown")
 
-        lat, lon = grid_to_demo_location(grid)
-        map_link = f"https://www.google.com/maps?q={lat},{lon}"
+        lat, lon  = grid_to_demo_location(grid)
+        map_link  = f"https://www.google.com/maps?q={lat},{lon}"
 
         caption = (
             "🚨 *RESQ ALERT*\n\n"
             f"🆔 *Victim ID:* `{vid}`\n"
+            f"🚁 *Drone:* `{drone_id}`\n"
             f"⚠️ *Priority:* *{priority}*\n"
             f"🧍 *Pose:* `{pose}`\n"
             f"📍 *Grid:* `{grid}`\n"
@@ -65,24 +45,15 @@ def send_telegram_alert(victim: dict, image_path: str) -> bool:
             f"🕒 *Time:* `{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}`"
         )
 
-        # 🔥 IMPORTANT: ":" separator MUST match app.py
+        # callback_data format: action:drone_id:victim_id:row:col
         keyboard = {
             "inline_keyboard": [
                 [
-                    {
-                        "text": "🚑 On the Way",
-                        "callback_data": f"onway:{vid}:{grid[0]}:{grid[1]}"
-                    },
-                    {
-                        "text": "✔️ Rescued",
-                        "callback_data": f"rescued:{vid}:{grid[0]}:{grid[1]}"
-                    }
+                    {"text": "🚑 On the Way", "callback_data": f"onway:{drone_id}:{vid}:{grid[0]}:{grid[1]}"},
+                    {"text": "✔️ Rescued",    "callback_data": f"rescued:{drone_id}:{vid}:{grid[0]}:{grid[1]}"}
                 ],
                 [
-                    {
-                        "text": "❗ False Alarm",
-                        "callback_data": f"false:{vid}:{grid[0]}:{grid[1]}"
-                    }
+                    {"text": "❗ False Alarm", "callback_data": f"false:{drone_id}:{vid}:{grid[0]}:{grid[1]}"}
                 ]
             ]
         }
@@ -92,9 +63,9 @@ def send_telegram_alert(victim: dict, image_path: str) -> bool:
                 f"{API}/sendPhoto",
                 files={"photo": img},
                 data={
-                    "chat_id": CHAT_ID,
-                    "caption": caption,
-                    "parse_mode": "Markdown",
+                    "chat_id":      CHAT_ID,
+                    "caption":      caption,
+                    "parse_mode":   "Markdown",
                     "reply_markup": json.dumps(keyboard)
                 },
                 timeout=10
@@ -104,7 +75,7 @@ def send_telegram_alert(victim: dict, image_path: str) -> bool:
             print("[Telegram] SEND FAILED:", res.text)
             return False
 
-        print(f"[Telegram] Alert sent | Victim {vid}")
+        print(f"[Telegram] Alert sent | {drone_id} Victim {vid}")
         return True
 
     except Exception as e:

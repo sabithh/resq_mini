@@ -1,0 +1,37 @@
+# Secrets — NEVER commit these
+resq_backend/.env
+*.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+
+# YOLO weights (large binary files)
+*.pt
+
+# SQLite
+*.db
+
+# Static outputs (generated at runtime)
+resq_backend/static/*.jpg
+resq_backend/static/*.png
+resq_backend/videos/
+
+# Flutter / Dart
+resq_app/.dart_tool/
+resq_app/.flutter-plugins
+resq_app/.flutter-plugins-dependencies
+resq_app/build/
+resq_app/.pub-cache/
+resq_app/android/.gradle/
+resq_app/android/app/debug/
+
+# IDE
+.idea/
+.vscode/
+*.code-workspace
+.DS_Store
+Thumbs.db

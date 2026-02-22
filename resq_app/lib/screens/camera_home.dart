@@ -1,0 +1,249 @@
+// screens/camera_home.dart
+
+import 'dart:async';
+import 'dart:io';
+import 'dart:ui';
+
+import 'package:flutter/material.dart';
+import 'package:camera/camera.dart';
+import 'package:image_picker/image_picker.dart';
+
+import '../services/api_service.dart';
+import '../widgets/telemetry_overlay.dart';
+import 'settings_screen.dart';
+
+late List<CameraDescription> cameras;
+
+class CameraHome extends StatefulWidget {
+  const CameraHome({super.key});
+  @override
+  State<CameraHome> createState() => _CameraHomeState();
+}
+
+class _CameraHomeState extends State<CameraHome>
+    with SingleTickerProviderStateMixin {
+  CameraController? _controller;
+  bool _isStreaming = false;
+  bool _isSending   = false;
+  Timer? _frameTimer;
+
+  String _statusMessage = 'SYSTEM READY';
+  Color  _statusColor   = Colors.cyanAccent;
+
+  String _droneId = 'DRONE_1';
+
+  late AnimationController _scanController;
+
+  @override
+  void initState() {
+    super.initState();
+    _initCamera();
+    _scanController = AnimationController(
+        vsync: this, duration: const Duration(seconds: 3));
+  }
+
+  Future<void> _initCamera() async {
+    _controller = CameraController(
+        cameras.first, ResolutionPreset.medium, enableAudio: false);
+    await _controller!.initialize();
+    if (mounted) setState(() {});
+  }
+
+  @override
+  void dispose() {
+    _scanController.dispose();
+    _frameTimer?.cancel();
+    _controller?.dispose();
+    super.dispose();
+  }
+
+  // ── STREAM ────────────────────────────────────────
+  void _startLiveStream() {
+    setState(() {
+      _isStreaming  = true;
+      _statusMessage = 'LIVE FEED ACTIVE';
+      _statusColor   = Colors.greenAccent;
+    });
+    _scanController.repeat(reverse: true);
+    _frameTimer = Timer.periodic(const Duration(milliseconds: 1200), (_) async {
+      if (!_controller!.value.isInitialized || _isSending) return;
+      final pic = await _controller!.takePicture();
+      await _sendCapture(File(pic.path));
+    });
+  }
+
+  void _stopLiveStream() {
+    _frameTimer?.cancel();
+    _scanController.stop();
+    setState(() {
+      _isStreaming   = false;
+      _statusMessage = 'SYSTEM IDLE';
+      _statusColor   = Colors.cyanAccent;
+    });
+  }
+
+  // ── SEND ──────────────────────────────────────────
+  Future<void> _sendCapture(File file) async {
+    if (_isSending) return;
+    _setStatus(true, 'UPLOADING IMAGE...', Colors.orangeAccent);
+    try {
+      final res = await ApiService.sendImageForDetect(file, droneId: _droneId);
+      _setStatus(false,
+          res.statusCode == 200 ? 'IMAGE PROCESSED' : 'UPLOAD ERROR',
+          res.statusCode == 200 ? Colors.greenAccent : Colors.redAccent);
+    } catch (_) {
+      _setStatus(false, 'CONNECTION LOST', Colors.redAccent);
+    }
+  }
+
+  Future<void> _pickFile({required bool isVideo}) async {
+    final picker = ImagePicker();
+    final file   = isVideo
+        ? await picker.pickVideo(source: ImageSource.gallery)
+        : await picker.pickImage(source: ImageSource.gallery);
+    if (file == null) return;
+    if (isVideo) {
+      _uploadVideo(File(file.path));
+    } else {
+      _sendCapture(File(file.path));
+    }
+  }
+
+  Future<void> _uploadVideo(File videoFile) async {
+    if (_isSending) return;
+    _setStatus(true, 'UPLOADING VIDEO...', Colors.orangeAccent);
+    try {
+      final res = await ApiService.uploadVideo(videoFile);
+      _setStatus(false,
+          res.statusCode == 200 ? 'VIDEO UPLOADED' : 'VIDEO UPLOAD FAILED',
+          res.statusCode == 200 ? Colors.greenAccent : Colors.redAccent);
+    } catch (_) {
+      _setStatus(false, 'CONNECTION ERROR', Colors.redAccent);
+    }
+  }
+
+  void _setStatus(bool busy, String msg, Color color) {
+    setState(() {
+      _isSending     = busy;
+      _statusMessage = msg;
+      _statusColor   = color;
+    });
+  }
+
+  // ── UI ────────────────────────────────────────────
+  @override
+  Widget build(BuildContext context) {
+    if (_controller == null || !_controller!.value.isInitialized) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator(color: Colors.cyanAccent)),
+      );
+    }
+    return Scaffold(
+      body: Stack(children: [
+        Positioned.fill(child: CameraPreview(_controller!)),
+
+        if (_isStreaming)
+          AnimatedBuilder(
+            animation: _scanController,
+            builder: (_, __) => Positioned(
+              top: MediaQuery.of(context).size.height * _scanController.value,
+              left: 0, right: 0,
+              child: Container(height: 2, color: Colors.cyanAccent),
+            ),
+          ),
+
+        Positioned(top: 50, left: 20, right: 20, child: _buildTopHud()),
+        const Positioned.fill(child: TelemetryOverlay()),
+        Positioned(bottom: 30, left: 20, right: 20, child: _buildBottomDock()),
+      ]),
+    );
+  }
+
+  Widget _buildTopHud() => ClipRRect(
+    borderRadius: BorderRadius.circular(15),
+    child: BackdropFilter(
+      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+        decoration: BoxDecoration(
+          color: Colors.black.withOpacity(0.4),
+          border: Border.all(color: _statusColor.withOpacity(0.5)),
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text('$_droneId',
+                  style: TextStyle(
+                      color: Colors.cyanAccent.withOpacity(0.7),
+                      fontSize: 10, letterSpacing: 2)),
+              Text(_statusMessage,
+                  style: TextStyle(
+                      color: _statusColor, fontSize: 18, fontWeight: FontWeight.bold)),
+            ]),
+            if (_isSending)
+              const SizedBox(
+                  width: 20, height: 20,
+                  child: CircularProgressIndicator(
+                      strokeWidth: 2, color: Colors.orangeAccent)),
+          ],
+        ),
+      ),
+    ),
+  );
+
+  Widget _buildBottomDock() => ClipRRect(
+    borderRadius: BorderRadius.circular(25),
+    child: BackdropFilter(
+      filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 20),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.05),
+          borderRadius: BorderRadius.circular(25),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            _hudButton(Icons.image_search, 'IMG',
+                () { if (!_isSending) _pickFile(isVideo: false); }),
+            _mainActionButton(),
+            _hudButton(Icons.video_library, 'VID',
+                () { if (!_isSending) _pickFile(isVideo: true); }),
+            _hudButton(Icons.settings, 'CFG', () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (_) => const SettingsScreen()));
+            }),
+          ],
+        ),
+      ),
+    ),
+  );
+
+  Widget _mainActionButton() => GestureDetector(
+    onTap: _isSending ? null : (_isStreaming ? _stopLiveStream : _startLiveStream),
+    child: Container(
+      height: 70, width: 70,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(
+            color: _isStreaming ? Colors.redAccent : Colors.cyanAccent, width: 2),
+      ),
+      child: Icon(
+          _isStreaming ? Icons.stop : Icons.sensors,
+          color: _isStreaming ? Colors.redAccent : Colors.cyanAccent,
+          size: 35),
+    ),
+  );
+
+  Widget _hudButton(IconData icon, String label, VoidCallback onTap) =>
+      InkWell(
+        onTap: onTap,
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
+          Icon(icon, color: Colors.white70),
+          const SizedBox(height: 4),
+          Text(label, style: const TextStyle(color: Colors.white54, fontSize: 10)),
+        ]),
+      );
+}

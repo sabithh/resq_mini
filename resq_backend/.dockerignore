@@ -1,0 +1,23 @@
+# Docker ignore for ResQ backend
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+
+# YOLO model weights (too large for image — mount or download at runtime)
+*.pt
+
+# SQLite DB (bind-mount instead)
+resq.db
+
+# Outputs
+static/*.jpg
+static/*.png
+videos/
+
+# Dev artifacts
+.env.local
+*.log
+.DS_Store
