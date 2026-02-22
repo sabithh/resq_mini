@@ -10,6 +10,14 @@ class ApiService {
   static const String _defaultUrl = 'http://192.168.1.2:8000';
 
   // ── URL management ──────────────────────────────────
+
+  /// Returns true if the user has explicitly saved a backend URL.
+  /// Used by SplashScreen to decide whether to show the setup dialog.
+  static Future<bool> hasCustomUrl() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.containsKey(_keyBaseUrl);
+  }
+
   static Future<String> getBaseUrl() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString(_keyBaseUrl) ?? _defaultUrl;
