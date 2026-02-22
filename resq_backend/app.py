@@ -450,6 +450,8 @@ def start_stream(drone_id: str = "DRONE_1"):
 @app.post("/restart-stream")
 def restart_stream(drone_id: str = "DRONE_1"):
     global streaming_active, video_thread
+    if not current_video_path:
+        raise HTTPException(400, "No video uploaded")
     streaming_active = False
     time.sleep(0.2)
     streaming_active = True

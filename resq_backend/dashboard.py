@@ -142,8 +142,8 @@ header {
     border-radius: 10px; padding: 12px; display: flex; justify-content: center; flex-shrink: 0;
 }
 .map-grid {
-    display: grid; grid-template-columns: repeat(6,1fr);
-    grid-template-rows: repeat(6,1fr); gap: 3px; width: 200px; height: 200px;
+    display: grid; grid-template-columns: repeat(10,1fr);
+    grid-template-rows: repeat(10,1fr); gap: 2px; width: 200px; height: 200px;
 }
 .cell { background: rgba(0,0,0,0.35); border: 1px solid rgba(34,211,238,0.1); position: relative; }
 .dot {
@@ -345,7 +345,7 @@ function renderVictims(victims) {
 
     // Tactical grid
     if (!document.getElementById("map").children.length) {
-        for (let i = 0; i < 36; i++) {
+        for (let i = 0; i < 100; i++) {
             const c = document.createElement("div");
             c.className = "cell";
             document.getElementById("map").appendChild(c);
@@ -394,7 +394,7 @@ function renderVictims(victims) {
 
         // Map dot
         if (v.grid && v.grid.length >= 2) {
-            const idx = (v.grid[0] - 1) * 6 + (v.grid[1] - 1);
+            const idx = v.grid[0] * 10 + v.grid[1];  // 0-indexed, 10 cols
             const cell = document.getElementById("map").children[idx];
             if (cell) {
                 const dot = document.createElement("div");

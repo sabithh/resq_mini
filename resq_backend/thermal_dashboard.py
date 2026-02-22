@@ -348,9 +348,9 @@ header {
         PREPROCESSING MODE
       </div>
       <div class="mode-chips" id="modeChips" style="margin-top:8px;" onclick="event.stopPropagation()">
-        <button class="chip active" onclick="setMode('clahe')">⚡ CLAHE</button>
-        <button class="chip"       onclick="setMode('false_color')">🌈 FALSE COLOR</button>
-        <button class="chip"       onclick="setMode('raw')">📷 RAW</button>
+        <button class="chip active" onclick="setMode('clahe', this)">⚡ CLAHE</button>
+        <button class="chip"       onclick="setMode('false_color', this)">🌈 FALSE COLOR</button>
+        <button class="chip"       onclick="setMode('raw', this)">📷 RAW</button>
       </div>
 
       <div class="btn-row" onclick="event.stopPropagation()">
@@ -465,10 +465,10 @@ dropZone.addEventListener('drop', e => {
 });
 
 // ── MODE CHIPS ─────────────────────────────
-function setMode(mode) {
+function setMode(mode, el) {
     currentMode = mode;
     document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-    event.target.classList.add('active');
+    if (el) el.classList.add('active');
     document.getElementById('modeLabel').innerText = mode.toUpperCase();
 }
 
