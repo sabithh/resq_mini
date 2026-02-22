@@ -21,7 +21,7 @@ class CameraHome extends StatefulWidget {
 }
 
 class _CameraHomeState extends State<CameraHome>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   CameraController? _controller;
   bool _isStreaming  = false;
   bool _isSending    = false;
@@ -39,6 +39,7 @@ class _CameraHomeState extends State<CameraHome>
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _initCamera();
     _scanController = AnimationController(
         vsync: this, duration: const Duration(seconds: 3));
@@ -53,10 +54,26 @@ class _CameraHomeState extends State<CameraHome>
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _scanController.dispose();
     _frameTimer?.cancel();
     _controller?.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // If the app is minimized/paused, release the camera to save battery
+    // and prevent crashes.
+    if (state == AppLifecycleState.inactive || state == AppLifecycleState.paused) {
+      if (_isStreaming) _stopLiveStream();
+      _controller?.dispose();
+      _controller = null;
+      if (mounted) setState(() {});
+    } else if (state == AppLifecycleState.resumed) {
+      // Re-initialize camera on foreground
+      _initCamera();
+    }
   }
 
   // ── STREAM ────────────────────────────────────────
