@@ -10,10 +10,12 @@ Tables:
 
 import sqlite3
 import json
+import os
 from datetime import datetime
 from pathlib import Path
 
-DB_PATH = Path(__file__).parent / "resq.db"
+# Configurable via DB_PATH env var (useful for Docker volume mounts)
+DB_PATH = Path(os.environ.get("DB_PATH", str(Path(__file__).parent / "resq.db")))
 
 
 # ──────────────────────────────────────────────────────

@@ -337,6 +337,7 @@ async def detect_image(
     cv2.imwrite(str(STATIC_DIR / "latest_annotated.jpg"), annotated)
 
     handle_alerts(image, victims, drone_id=drone_id, mode="rgb")
+    await _push_update()
 
     return {"count": len(victims), "victims": victims, "drone_id": drone_id}
 
@@ -366,6 +367,7 @@ async def detect_thermal(
     cv2.imwrite(str(STATIC_DIR / "thermal_annotated.jpg"), annotated)
 
     handle_alerts(image, victims, drone_id=drone_id, mode=mode)
+    await _push_update()
 
     return {"count": len(victims), "victims": victims,
             "preprocessing_mode": mode, "drone_id": drone_id}
