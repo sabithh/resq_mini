@@ -23,8 +23,10 @@ class CameraHome extends StatefulWidget {
 class _CameraHomeState extends State<CameraHome>
     with SingleTickerProviderStateMixin {
   CameraController? _controller;
-  bool _isStreaming = false;
-  bool _isSending   = false;
+  bool _isStreaming  = false;
+  bool _isSending    = false;
+  bool _thermalMode  = false;
+  String _thermalPreset = 'clahe'; // 'clahe' | 'false_color' | 'raw'
   Timer? _frameTimer;
 
   String _statusMessage = 'SYSTEM READY';
@@ -85,11 +87,17 @@ class _CameraHomeState extends State<CameraHome>
   // ── SEND ──────────────────────────────────────────
   Future<void> _sendCapture(File file) async {
     if (_isSending) return;
-    _setStatus(true, 'UPLOADING IMAGE...', Colors.orangeAccent);
+    _setStatus(true,
+        _thermalMode ? 'THERMAL SCAN...' : 'UPLOADING IMAGE...', Colors.orangeAccent);
     try {
-      final res = await ApiService.sendImageForDetect(file, droneId: _droneId);
+      final res = _thermalMode
+          ? await ApiService.sendImageForThermal(file,
+              mode: _thermalPreset, droneId: _droneId)
+          : await ApiService.sendImageForDetect(file, droneId: _droneId);
       _setStatus(false,
-          res.statusCode == 200 ? 'IMAGE PROCESSED' : 'UPLOAD ERROR',
+          res.statusCode == 200
+              ? (_thermalMode ? 'THERMAL PROCESSED' : 'IMAGE PROCESSED')
+              : 'UPLOAD ERROR',
           res.statusCode == 200 ? Colors.greenAccent : Colors.redAccent);
     } catch (_) {
       _setStatus(false, 'CONNECTION LOST', Colors.redAccent);
@@ -174,10 +182,25 @@ class _CameraHomeState extends State<CameraHome>
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('$_droneId',
-                  style: TextStyle(
-                      color: Colors.cyanAccent.withOpacity(0.7),
-                      fontSize: 10, letterSpacing: 2)),
+              Row(children: [
+                Text('$_droneId',
+                    style: TextStyle(
+                        color: Colors.cyanAccent.withOpacity(0.7),
+                        fontSize: 10, letterSpacing: 2)),
+                if (_thermalMode) ...[
+                  const SizedBox(width: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: Colors.amber.withOpacity(0.2),
+                      border: Border.all(color: Colors.amber, width: 0.5),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text(_thermalPreset.toUpperCase(),
+                        style: const TextStyle(color: Colors.amber, fontSize: 8, letterSpacing: 1)),
+                  ),
+                ],
+              ]),
               Text(_statusMessage,
                   style: TextStyle(
                       color: _statusColor, fontSize: 18, fontWeight: FontWeight.bold)),
@@ -211,6 +234,7 @@ class _CameraHomeState extends State<CameraHome>
             _mainActionButton(),
             _hudButton(Icons.video_library, 'VID',
                 () { if (!_isSending) _pickFile(isVideo: true); }),
+            _thermalButton(),
             _hudButton(Icons.settings, 'CFG', () {
               Navigator.push(context,
                   MaterialPageRoute(builder: (_) => const SettingsScreen()));
@@ -246,4 +270,44 @@ class _CameraHomeState extends State<CameraHome>
           Text(label, style: const TextStyle(color: Colors.white54, fontSize: 10)),
         ]),
       );
+
+  Widget _thermalButton() {
+    final active = _thermalMode;
+    return GestureDetector(
+      onTap: () {
+        setState(() => _thermalMode = !_thermalMode);
+      },
+      onLongPress: () {
+        // Cycle through presets on long press
+        const presets = ['clahe', 'false_color', 'raw'];
+        final next = (presets.indexOf(_thermalPreset) + 1) % presets.length;
+        setState(() => _thermalPreset = presets[next]);
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Thermal preset: ${_thermalPreset.toUpperCase()}',
+              style: const TextStyle(color: Colors.black)),
+          backgroundColor: Colors.amber,
+          duration: const Duration(seconds: 1),
+        ));
+      },
+      child: Column(mainAxisSize: MainAxisSize.min, children: [
+        Container(
+          padding: const EdgeInsets.all(6),
+          decoration: BoxDecoration(
+            color: active ? Colors.amber.withOpacity(0.2) : Colors.transparent,
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: active ? Colors.amber : Colors.white30,
+              width: active ? 1.5 : 0.5,
+            ),
+          ),
+          child: Icon(Icons.thermostat,
+              color: active ? Colors.amber : Colors.white54, size: 20),
+        ),
+        const SizedBox(height: 4),
+        Text('THML',
+            style: TextStyle(
+                color: active ? Colors.amber : Colors.white54, fontSize: 10)),
+      ]),
+    );
+  }
 }
