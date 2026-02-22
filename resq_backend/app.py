@@ -442,6 +442,11 @@ def start_stream(drone_id: str = "DRONE_1"):
         raise HTTPException(400, "No video uploaded")
     if streaming_active:
         return {"status": "already running"}
+    
+    if video_thread is not None and video_thread.is_alive():
+        streaming_active = False
+        video_thread.join(timeout=1.0)
+
     streaming_active = True
     video_thread = threading.Thread(target=video_worker, args=(drone_id,), daemon=True)
     video_thread.start()
@@ -452,8 +457,11 @@ def restart_stream(drone_id: str = "DRONE_1"):
     global streaming_active, video_thread
     if not current_video_path:
         raise HTTPException(400, "No video uploaded")
+    
     streaming_active = False
-    time.sleep(0.2)
+    if video_thread is not None and video_thread.is_alive():
+        video_thread.join(timeout=1.0)
+        
     streaming_active = True
     video_thread = threading.Thread(target=video_worker, args=(drone_id,), daemon=True)
     video_thread.start()
@@ -519,6 +527,7 @@ def video_stream():
         while True:
             with frame_lock:
                 if latest_stream_frame is None:
+                    time.sleep(0.03)
                     continue
                 _, jpg = cv2.imencode(".jpg", latest_stream_frame)
             yield b"--frame\r\nContent-Type: image/jpeg\r\n\r\n" + jpg.tobytes() + b"\r\n"
