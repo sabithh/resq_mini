@@ -69,32 +69,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
           // ── Backend URL ──────────────────────────────────
           _sectionLabel('BACKEND URL'),
           const SizedBox(height: 10),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.05),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.cyanAccent.withValues(alpha: 0.3)),
-                ),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                child: TextField(
-                  controller: _urlCtrl,
-                  style: const TextStyle(color: Colors.white, fontSize: 13, letterSpacing: 1),
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: 'http://192.168.1.2:8000',
-                    hintStyle: TextStyle(color: Colors.white24, fontSize: 12),
-                    prefixIcon: Icon(Icons.link, color: Colors.cyanAccent.withValues(alpha: 0.5), size: 18),
-                  ),
-                ),
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white10,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.cyanAccent.withValues(alpha: 0.3)),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+            child: TextField(
+              controller: _urlCtrl,
+              style: const TextStyle(color: Colors.white, fontSize: 13, letterSpacing: 1),
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                hintText: 'http://192.168.1.2:8000',
+                hintStyle: const TextStyle(color: Colors.white24, fontSize: 12),
+                prefixIcon: Icon(Icons.link, color: Colors.cyanAccent.withValues(alpha: 0.5), size: 18),
               ),
             ),
           ),
 
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
 
           // Buttons
           Row(children: [
