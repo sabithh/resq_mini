@@ -536,12 +536,12 @@ function renderResults(data) {
         return;
     }
 
-    victims.sort((a,b) => {
+    const sortedVictims = [...victims].sort((a,b) => {
         const o = {HIGH:0,MEDIUM:1,LOW:2};
         return (o[a.priority]||3) - (o[b.priority]||3);
     });
 
-    victims.forEach(v => {
+    sortedVictims.forEach(v => {
         const card = document.createElement('div');
         card.className = 'victim-card ' + v.priority;
         card.innerHTML = `

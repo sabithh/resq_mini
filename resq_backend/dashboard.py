@@ -397,12 +397,9 @@ function renderVictims(victims) {
             const idx = v.grid[0] * 10 + v.grid[1];  // 0-indexed, 10 cols
             const cell = document.getElementById("map").children[idx];
             if (cell) {
-                const dot = document.createElement("div");
-                dot.className = "dot";
-                dot.style.background =
-                    v.priority === "HIGH" ? "var(--red)" :
-                    v.priority === "MEDIUM" ? "var(--yellow)" : "var(--green)";
-                cell.appendChild(dot);
+                const color = v.priority === "HIGH" ? "var(--red)" :
+                              v.priority === "MEDIUM" ? "var(--yellow)" : "var(--green)";
+                cell.innerHTML = `<div class="dot" style="background:${color}"></div>`;
             }
         }
     });
