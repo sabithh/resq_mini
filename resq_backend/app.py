@@ -29,6 +29,7 @@ from threading import Lock
 from copy import deepcopy
 import requests
 import json
+import asyncio
 
 from config import (
     BOT_TOKEN, CHAT_ID, BACKEND_HOST, BACKEND_PORT,
@@ -79,15 +80,19 @@ streaming_active   = False
 video_thread       = None
 current_video_path = str(VIDEO_DIR / "current.mp4") if (VIDEO_DIR / "current.mp4").exists() else None
 
+# asyncio event loop — captured at startup for thread-safe WS push
+_loop: asyncio.AbstractEventLoop = None
+
 # ──────────────────────────────────────────────────────
 # STARTUP — load DB
 # ──────────────────────────────────────────────────────
 
 @app.on_event("startup")
-def on_startup():
-    global rescue_status
+async def on_startup():
+    global rescue_status, _loop
     init_db()
     rescue_status = load_rescue_status()
+    _loop = asyncio.get_event_loop()    # capture loop for thread-safe WS push
     threading.Thread(target=telegram_polling_worker, daemon=True).start()
     print("[ResQ] Backend v2.0 started — multi-drone + SQLite + WebSocket ready")
 
@@ -414,6 +419,9 @@ def video_worker(drone_id: str = "DRONE_1"):
             annotated = draw_annotations(frame, victims)
             cv2.imwrite(str(STATIC_DIR / "latest_annotated.jpg"), annotated)
             handle_alerts(frame, victims, drone_id=drone_id, mode="video")
+            # Push WebSocket update from thread using the captured event loop
+            if _loop and not _loop.is_closed():
+                asyncio.run_coroutine_threadsafe(_push_update(), _loop)
 
         with frame_lock:
             latest_stream_frame = frame.copy()
