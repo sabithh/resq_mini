@@ -23,10 +23,9 @@ class ResQApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.dark(
-          primary:    Colors.cyanAccent,
-          secondary:  Colors.cyanAccent,
-          surface:    Colors.black,
-          background: Colors.black,
+          primary:   Colors.cyanAccent,
+          secondary: Colors.cyanAccent,
+          surface:   Colors.black,
         ),
         scaffoldBackgroundColor: Colors.black,
         fontFamily: 'monospace',
