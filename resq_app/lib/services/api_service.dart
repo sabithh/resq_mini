@@ -37,7 +37,7 @@ class ApiService {
     final url  = Uri.parse('$base/detect?drone_id=$droneId');
     final req  = http.MultipartRequest('POST', url);
     req.files.add(await http.MultipartFile.fromPath('file', imageFile.path));
-    return req.send();
+    return req.send().timeout(const Duration(seconds: 10));
   }
 
   static Future<http.StreamedResponse> sendImageForThermal(
@@ -49,7 +49,7 @@ class ApiService {
     final url  = Uri.parse('$base/detect-thermal?mode=$mode&drone_id=$droneId');
     final req  = http.MultipartRequest('POST', url);
     req.files.add(await http.MultipartFile.fromPath('file', imageFile.path));
-    return req.send();
+    return req.send().timeout(const Duration(seconds: 10));
   }
 
   static Future<http.StreamedResponse> uploadVideo(File videoFile) async {
@@ -57,14 +57,16 @@ class ApiService {
     final url  = Uri.parse('$base/upload-video');
     final req  = http.MultipartRequest('POST', url);
     req.files.add(await http.MultipartFile.fromPath('file', videoFile.path));
-    return req.send();
+    return req.send().timeout(const Duration(seconds: 10));
   }
 
   // ── Stream controls ──────────────────────────────────
   static Future<bool> post(String path) async {
     try {
       final base = await getBaseUrl();
-      final res  = await http.post(Uri.parse('$base$path'));
+      final res  = await http.post(Uri.parse('$base$path')).timeout(
+        const Duration(seconds: 5),
+      );
       return res.statusCode == 200;
     } catch (_) {
       return false;
