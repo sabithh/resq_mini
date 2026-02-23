@@ -194,6 +194,7 @@ header {
     object-fit: contain;
     background: #000;
     display: block;
+    min-height: 0;
 }
 
 .img-placeholder {

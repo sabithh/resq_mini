@@ -165,7 +165,19 @@ class _CameraHomeState extends State<CameraHome>
     }
     return Scaffold(
       body: Stack(children: [
-        Positioned.fill(child: CameraPreview(_controller!)),
+        Positioned.fill(
+          child: Container(
+            color: Colors.black,
+            child: Center(
+              child: AspectRatio(
+                aspectRatio: MediaQuery.of(context).orientation == Orientation.portrait
+                    ? 1 / _controller!.value.aspectRatio
+                    : _controller!.value.aspectRatio,
+                child: CameraPreview(_controller!),
+              ),
+            ),
+          ),
+        ),
 
         if (_isStreaming)
           AnimatedBuilder(

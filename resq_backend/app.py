@@ -253,6 +253,10 @@ def telegram_polling_worker():
                     }, timeout=5)
                     _clear_keyboard(query["message"]["message_id"])
 
+                # Push WebSocket update to instantly sync the web dashboards
+                if _loop and not _loop.is_closed():
+                    asyncio.run_coroutine_threadsafe(_push_update(), _loop)
+
         except Exception as e:
             print("[Telegram] Poll error:", e)
 

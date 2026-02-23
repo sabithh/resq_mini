@@ -107,7 +107,7 @@ header {
     border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
     display: flex; flex-direction: column;
 }
-.feed-container img { width: 100%; flex: 1; object-fit: contain; background: #000; }
+.feed-container img { width: 100%; height: 100%; object-fit: contain; background: #000; min-height: 0; }
 .feed-label {
     padding: 8px 14px; font-size: 10px; color: rgba(255,255,255,0.3);
     letter-spacing: 2px; border-bottom: 1px solid var(--border);

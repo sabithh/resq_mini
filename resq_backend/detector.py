@@ -83,7 +83,7 @@ class Detector:
         return victims
 
     # --------------------------------------------------
-    # POSE INFERENCE (unchanged logic)
+    # POSE INFERENCE (Birds-Eye Euclidean Extension)
     # --------------------------------------------------
     def _infer_pose(self, kpts, w, h):
         if kpts is None:
@@ -92,22 +92,61 @@ class Detector:
         kpts = np.asarray(kpts)
         if kpts.ndim == 3:
             kpts = kpts[0]
-        if kpts.shape[0] < 13:
+        if kpts.shape[0] < 17:  # Need ankles (15, 16)
             return "unknown"
 
         try:
-            nose  = kpts[0]
-            l_hip = kpts[11]
-            r_hip = kpts[12]
+            # Shoulders (5, 6) -> Neck
+            l_sh = kpts[5]
+            r_sh = kpts[6]
+            if l_sh[2] < 0.2 and r_sh[2] < 0.2: return "unknown"
+            
+            # Hips (11, 12) -> Pelvis
+            l_hp = kpts[11]
+            r_hp = kpts[12]
+            if l_hp[2] < 0.2 and r_hp[2] < 0.2: return "unknown"
+
+            # Ankles (15, 16)
+            l_an = kpts[15]
+            r_an = kpts[16]
+
+            # Midpoints
+            neck_x, neck_y = (l_sh[0]+r_sh[0])/2, (l_sh[1]+r_sh[1])/2
+            pelv_x, pelv_y = (l_hp[0]+r_hp[0])/2, (l_hp[1]+r_hp[1])/2
+            
+            # Use the most confident ankle, or average if both good
+            if l_an[2] > 0.2 and r_an[2] > 0.2:
+                ank_x, ank_y = (l_an[0]+r_an[0])/2, (l_an[1]+r_an[1])/2
+            elif l_an[2] > 0.2:
+                ank_x, ank_y = l_an[0], l_an[1]
+            elif r_an[2] > 0.2:
+                ank_x, ank_y = r_an[0], r_an[1]
+            else:
+                ank_x, ank_y = pelv_x, pelv_y # Fallback: Leg length 0 (foreshortened)
+
         except Exception:
             return "unknown"
 
-        if nose[2] < 0.5 or (l_hip[2] < 0.5 and r_hip[2] < 0.5):
-            return "unknown"
+        # 1. Bounding box diagonal as relative scale
+        import math
+        scale = math.sqrt(w**2 + h**2)
+        if scale == 0: scale = 0.001
 
-        hip_y  = l_hip[1] if l_hip[2] > r_hip[2] else r_hip[1]
-        head_y = nose[1]
+        # 2. Euclidean Physical Extensions
+        torso = math.sqrt((neck_x - pelv_x)**2 + (neck_y - pelv_y)**2)
+        legs  = math.sqrt((pelv_x - ank_x)**2  + (pelv_y - ank_y)**2)
 
-        if abs(head_y - hip_y) < h * 0.35:
+        # 3. Total Extension Ratio
+        extension = (torso + legs) / scale
+
+        # 4. Angled / Birds-Eye Heuristics
+        # A. If body is stretched across > 45% of its bounding box diagonal, it is lying down
+        if extension > 0.45:
             return "lying"
+
+        # B. If legs are occluded/missing (extension is small) but the box is extremely wide
+        # this indicates someone lying horizontally where the tracker only caught their upper body
+        if w > h * 1.35:
+            return "lying"
+
         return "standing"
