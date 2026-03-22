@@ -31,6 +31,7 @@ from copy import deepcopy
 import requests
 import json
 import asyncio
+from typing import Dict
 
 from config import (
     BOT_TOKEN, CHAT_ID, BACKEND_HOST, BACKEND_PORT,
@@ -76,7 +77,13 @@ app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 # GLOBALS
 # ──────────────────────────────────────────────────────
 
-detector = Detector()
+telegram_offset = 0
+detectors: Dict[str, Detector] = {}
+
+def get_detector(drone_id: str) -> Detector:
+    if drone_id not in detectors:
+        detectors[drone_id] = Detector()
+    return detectors[drone_id]
 
 # rescue_status keyed by (drone_id, victim_id, (grid_row, grid_col))
 rescue_status: dict = {}
@@ -152,7 +159,7 @@ async def websocket_endpoint(ws: WebSocket):
 def _build_status_payload(drone_id: str = None) -> dict:
     """Build the victim list payload for WebSocket push."""
     victims_out = []
-    for did, victims in drone_victims.items():
+    for did, victims in list(drone_victims.items()):
         if drone_id and did != drone_id:
             continue
         for v in victims:
@@ -288,7 +295,7 @@ def draw_annotations(image: np.ndarray, victims: list) -> np.ndarray:
     return output
 
 
-def crop_victim(image: np.ndarray, bbox: list, victim_id: int, pad: int = CROP_PADDING):
+def crop_victim(image: np.ndarray, bbox: list, victim_id: int, drone_id: str, pad: int = CROP_PADDING):
     """Crop victim with padding, save to static/, return path."""
     x1, y1, x2, y2 = bbox
     h_img, w_img = image.shape[:2]
@@ -302,7 +309,7 @@ def crop_victim(image: np.ndarray, bbox: list, victim_id: int, pad: int = CROP_P
     crop = image[y1:y2, x1:x2]
     if crop.size == 0:
         return None
-    path = STATIC_DIR / f"victim_{victim_id}.jpg"
+    path = STATIC_DIR / f"victim_{drone_id}_{victim_id}.jpg"
     cv2.imwrite(str(path), crop)
     return str(path)
 
@@ -329,7 +336,7 @@ def handle_alerts(image: np.ndarray, victims: list, drone_id: str, mode: str = "
         if entry["last_alert"] and (now - entry["last_alert"]) < cooldown:
             continue
 
-        crop_path = crop_victim(image, v["bbox_xyxy"], v["id"])
+        crop_path = crop_victim(image, v["bbox_xyxy"], v["id"], drone_id)
         if crop_path and send_telegram_alert(v, crop_path, drone_id=drone_id):
             entry["last_alert"] = now
             save_rescue_status(drone_id, v["id"], tuple(v["grid"]), entry)
@@ -348,11 +355,13 @@ async def detect_image(
         raise HTTPException(400, "Invalid image")
 
     h, w = image.shape[:2]
-    victims = [assign_grid(compute_risk(d), w, h) for d in detector.detect(image)]
+    detector = get_detector(drone_id)
+    victims = [assign_grid(compute_risk(d, drone_id=drone_id), w, h) for d in detector.detect(image)]
 
     drone_victims[drone_id] = victims
 
     annotated = draw_annotations(image, victims)
+    cv2.imwrite(str(STATIC_DIR / f"latest_annotated_{drone_id}.jpg"), annotated)
     cv2.imwrite(str(STATIC_DIR / "latest_annotated.jpg"), annotated)
 
     handle_alerts(image, victims, drone_id=drone_id, mode="rgb")
@@ -378,25 +387,28 @@ async def detect_thermal(
     processed = preprocess(image, mode=mode)
 
     h, w = processed.shape[:2]
-    victims = [assign_grid(compute_risk(d), w, h) for d in detector.detect(processed)]
+    detector = get_detector(drone_id)
+    # Use low confidence (0.05) for thermal images because YOLOv8 standard model struggles with thermal blobs
+    victims = [assign_grid(compute_risk(d, drone_id=drone_id), w, h) for d in detector.detect(processed, conf=0.05)]
 
     drone_victims[drone_id] = victims
 
     annotated = draw_annotations(processed, victims)
-    cv2.imwrite(str(STATIC_DIR / "thermal_annotated.jpg"), annotated)
+    filename = f"thermal_annotated_{int(time.time()*1000)}.jpg"
+    cv2.imwrite(str(STATIC_DIR / filename), annotated)
 
-    handle_alerts(image, victims, drone_id=drone_id, mode=mode)
+    handle_alerts(processed, victims, drone_id=drone_id, mode=mode)
     await _push_update()
 
     return {"count": len(victims), "victims": victims,
-            "preprocessing_mode": mode, "drone_id": drone_id}
+            "preprocessing_mode": mode, "drone_id": drone_id, "image_url": f"/static/{filename}"}
 
 # ──────────────────────────────────────────────────────
 # VIDEO UPLOAD
 # ──────────────────────────────────────────────────────
 
 @app.post("/upload-video")
-async def upload_video(file: UploadFile = File(...)):
+def upload_video(file: UploadFile = File(...)):
     global current_video_path, streaming_active
     streaming_active = False
 
@@ -428,9 +440,11 @@ def video_worker(drone_id: str = "DRONE_1"):
         # Frame skip — only run inference every FRAME_SKIP frames
         if frame_count % FRAME_SKIP == 0:
             h, w = frame.shape[:2]
-            victims = [assign_grid(compute_risk(d), w, h) for d in detector.detect(frame)]
+            detector = get_detector(drone_id)
+            victims = [assign_grid(compute_risk(d, drone_id=drone_id), w, h) for d in detector.detect(frame)]
             drone_victims[drone_id] = victims
             annotated = draw_annotations(frame, victims)
+            cv2.imwrite(str(STATIC_DIR / f"latest_annotated_{drone_id}.jpg"), annotated)
             cv2.imwrite(str(STATIC_DIR / "latest_annotated.jpg"), annotated)
             handle_alerts(frame, victims, drone_id=drone_id, mode="video")
             # Push WebSocket update from thread using the captured event loop

@@ -10,6 +10,8 @@ services:
       - "8000:8000"
     env_file:
       - ./resq_backend/.env
+    environment:
+      - DB_PATH=/app/db/resq.db
     volumes:
       # Persist uploaded images/videos and SQLite DB
       - ./resq_backend/static:/app/static

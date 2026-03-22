@@ -1,0 +1,2 @@
+Aspect 0.54 | ML: lying (0.40) | Heur: standing
+Aspect 0.59 | ML: standing (0.40) | Heur: standing

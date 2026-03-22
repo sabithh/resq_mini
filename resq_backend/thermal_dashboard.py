@@ -71,20 +71,23 @@ header {
 .header-title { font-size: 18px; color: var(--accent); letter-spacing: 3px; }
 .header-sub   { font-size: 10px; color: var(--sub); letter-spacing: 2px; margin-top: 2px; }
 
-.switch-btn {
-    padding: 10px 22px;
-    border-radius: 8px;
-    border: 1px solid rgba(34,211,238,0.4);
-    background: rgba(34,211,238,0.08);
-    color: #22d3ee;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 2px;
-    cursor: pointer;
-    text-decoration: none;
-    transition: all .2s;
+.nav-btn {
+    padding: 7px 16px; border-radius: 6px; font-family: inherit;
+    font-size: 10px; letter-spacing: 2px; cursor: pointer; text-decoration: none;
+    border: 1px solid; transition: all .2s;
 }
-.switch-btn:hover { background: rgba(34,211,238,0.18); border-color: #22d3ee; }
+.nav-btn-home {
+    border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: #fff;
+}
+.nav-btn-home:hover { background: rgba(255,255,255,0.15); }
+.nav-btn-thermal {
+    border-color: rgba(255,106,0,0.4); background: rgba(255,106,0,0.08); color: #ff6a00;
+}
+.nav-btn-thermal:hover { background: rgba(255,106,0,0.2); }
+.nav-btn-video {
+    border-color: rgba(34,211,238,0.4); background: rgba(34,211,238,0.06); color: #22d3ee;
+}
+.nav-btn-video:hover { background: rgba(34,211,238,0.15); }
 
 /* ── MAIN LAYOUT ─────────────────────────────── */
 .main {
@@ -329,7 +332,11 @@ header {
       <div class="header-sub">INFRARED DETECTION · RESQ SYSTEM</div>
     </div>
   </div>
-  <a href="/dashboard" class="switch-btn">⬅ RGB COMMAND CENTER</a>
+  <div class="header-right" style="display:flex;gap:12px;">
+    <a href="/dashboard"         class="nav-btn nav-btn-home">🏠 HOME</a>
+    <a href="/dashboard/thermal" class="nav-btn nav-btn-thermal">🌡️ THERMAL</a>
+    <a href="/dashboard/video"   class="nav-btn nav-btn-video">🎥 VIDEO</a>
+  </div>
 </header>
 
 <!-- MAIN -->
@@ -503,7 +510,7 @@ async function runDetect() {
 
         // Refresh annotated image (cache-bust)
         const ann = document.getElementById('annImg');
-        ann.src = '/static/thermal_annotated.jpg?t=' + Date.now();
+        ann.src = (data.image_url || '/static/thermal_annotated.jpg') + '?t=' + Date.now();
         ann.style.display = 'block';
         document.getElementById('annPlaceholder').style.display = 'none';
         document.getElementById('procLabel').innerText = 'PROCESSED ✔';

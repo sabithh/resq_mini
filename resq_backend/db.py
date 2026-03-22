@@ -13,6 +13,7 @@ import json
 import os
 from datetime import datetime
 from pathlib import Path
+from contextlib import contextmanager
 
 # Configurable via DB_PATH env var (useful for Docker volume mounts)
 DB_PATH = Path(os.environ.get("DB_PATH", str(Path(__file__).parent / "resq.db")))
@@ -60,10 +61,15 @@ def init_db():
 # CONNECTION HELPER
 # ──────────────────────────────────────────────────────
 
+@contextmanager
 def _conn():
     con = sqlite3.connect(str(DB_PATH))
     con.row_factory = sqlite3.Row
-    return con
+    try:
+        with con:  # auto-commits on success, rolls back on error
+            yield con
+    finally:
+        con.close()
 
 
 # ──────────────────────────────────────────────────────

@@ -70,6 +70,10 @@ header {
     border-color: var(--border); background: rgba(34,211,238,0.06); color: var(--cyan);
 }
 .nav-btn-video:hover { background: rgba(34,211,238,0.15); }
+.nav-btn-home {
+    border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: #fff;
+}
+.nav-btn-home:hover { background: rgba(255,255,255,0.15); }
 .export-btn {
     padding: 7px 16px; border-radius: 6px; font-family: inherit; font-size: 10px;
     letter-spacing: 2px; cursor: pointer; border: 1px solid rgba(16,185,129,0.4);
@@ -193,6 +197,7 @@ header {
     </div>
     <div class="sysTime" id="sysTime">--:--:--</div>
     <button class="export-btn" onclick="exportReport()">⬇ EXPORT</button>
+    <a href="/dashboard"         class="nav-btn nav-btn-home">🏠 HOME</a>
     <a href="/dashboard/thermal" class="nav-btn nav-btn-thermal">🌡️ THERMAL</a>
     <a href="/dashboard/video"   class="nav-btn nav-btn-video">🎥 VIDEO</a>
   </div>
@@ -330,8 +335,9 @@ connectWS();
 
 // ── FEED REFRESH ─────────────────────────────────────
 function refreshFeed() {
+    const droneStr = currentDrone ? "_" + currentDrone : "";
     document.getElementById("feed").src =
-        "/static/latest_annotated.jpg?t=" + Date.now();
+        "/static/latest_annotated" + droneStr + ".jpg?t=" + Date.now();
 }
 setInterval(refreshFeed, 3000); // fallback refresh
 
@@ -364,7 +370,7 @@ function renderVictims(victims) {
     }
 
     const sorted = [...filtered].sort((a, b) =>
-        (!a.rescued - !b.rescued) || (ORDER[a.priority] || 3) - (ORDER[b.priority] || 3)
+        (a.rescued - b.rescued) || (ORDER[a.priority] || 3) - (ORDER[b.priority] || 3)
     );
 
     let hasHigh = false;

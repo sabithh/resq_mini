@@ -30,3 +30,9 @@ BACKEND_PORT = int(os.environ.get("BACKEND_PORT", "8000"))
 FRAME_SKIP   = int(os.environ.get("FRAME_SKIP", "3"))    # process 1 in every N video frames
 CROP_PADDING = int(os.environ.get("CROP_PADDING", "20")) # px padding around victim crop
 ALERT_COOLDOWN_MINUTES = int(os.environ.get("ALERT_COOLDOWN_MINUTES", "1"))
+
+# ── Model paths ───────────────────────────────────────
+# Use fine-tuned aerial model when available, fall back to stock COCO
+DETECTION_MODEL = os.environ.get("DETECTION_MODEL", "yolov8m-aerial.pt")
+POSE_MODEL      = os.environ.get("POSE_MODEL", "yolov8m-pose.pt")
+POSE_CLASSIFIER = os.environ.get("POSE_CLASSIFIER", "pose_classifier.pkl")

@@ -46,6 +46,15 @@ class _CameraHomeState extends State<CameraHome>
   }
 
   Future<void> _initCamera() async {
+    if (cameras.isEmpty) {
+      if (mounted) {
+        setState(() {
+          _statusMessage = 'NO CAMERA FOUND';
+          _statusColor = Colors.redAccent;
+        });
+      }
+      return;
+    }
     _controller = CameraController(
         cameras.first, ResolutionPreset.medium, enableAudio: false);
     await _controller!.initialize();
@@ -148,6 +157,7 @@ class _CameraHomeState extends State<CameraHome>
   }
 
   void _setStatus(bool busy, String msg, Color color) {
+    if (!mounted) return;
     setState(() {
       _isSending     = busy;
       _statusMessage = msg;

@@ -1,0 +1,11 @@
+﻿Loaded image: (609, 1024, 3)
+[Detector] Using aerial-finetuned model: yolov8m-aerial.pt
+[PoseClassifier] Loaded model from D:\PROJECTS\ResQ\resq_backend\pose_classifier.pkl
+[Detector] ByteTrack + pose pipeline loaded
+[Detector] Confidence threshold: 0.15
+[Detector] Pose classifier: ML-based
+ID: 1, pose: standing, bbox: [698, 296, 756, 403], aspect: 0.542
+ID: 2, pose: standing, bbox: [656, 285, 713, 382], aspect: 0.588
+ID: 3, pose: standing, bbox: [773, 160, 811, 262], aspect: 0.373
+ID: 4, pose: standing, bbox: [737, 156, 782, 248], aspect: 0.489
+ID: 5, pose: standing, bbox: [494, 335, 540, 414], aspect: 0.582

@@ -2,40 +2,68 @@
 detector.py
 
 ResQ – Stable human detector with ByteTrack persistent IDs.
-- YOLOv8 general detection  (filters to person class only)
-- YOLOv8-Pose for lying / standing inference
+- YOLOv8 detection  (aerial-finetuned or stock COCO, configurable)
+- YOLOv8-Pose for keypoint extraction
+- ML pose classifier with heuristic fallback
 - ByteTrack for cross-frame ID persistence
 """
 
 from typing import List, Dict
 import numpy as np
+import math
+from pathlib import Path
 from ultralytics import YOLO
+
+from pose_classifier import PoseClassifier
 
 
 class Detector:
-    def __init__(self, conf: float = 0.3):
+    def __init__(self, conf: float = 0.15):
         self.conf = conf
-        self.detector   = YOLO("yolov8m.pt")
-        self.pose_model = YOLO("yolov8m-pose.pt")
         self.PERSON_CLASS_ID = 0
 
-        print("[Detector] ByteTrack + pose pipeline loaded")
+        # ── Load detection model ────────────────────────
+        # Prefer aerial-finetuned, fall back to stock COCO
+        from config import DETECTION_MODEL, POSE_MODEL, POSE_CLASSIFIER
+
+        det_path = Path(__file__).parent / DETECTION_MODEL
+        if det_path.exists():
+            self.detector = YOLO(str(det_path))
+            print(f"[Detector] Using aerial-finetuned model: {DETECTION_MODEL}")
+        else:
+            fallback = Path(__file__).parent / "yolov8m.pt"
+            self.detector = YOLO(str(fallback))
+            print(f"[Detector] Aerial model not found, using stock: yolov8m.pt")
+
+        # ── Load pose model ─────────────────────────────
+        pose_path = Path(__file__).parent / POSE_MODEL
+        self.pose_model = YOLO(str(pose_path))
+
+        # ── Load ML pose classifier ─────────────────────
+        clf_path = Path(__file__).parent / POSE_CLASSIFIER
+        self.pose_classifier = PoseClassifier(str(clf_path))
+
+        print(f"[Detector] ByteTrack + pose pipeline loaded")
         print(f"[Detector] Confidence threshold: {self.conf}")
+        print(f"[Detector] Pose classifier: {'ML-based' if self.pose_classifier.available else 'heuristic fallback'}")
 
     # --------------------------------------------------
     # MAIN DETECTION  (with ByteTrack)
     # --------------------------------------------------
-    def detect(self, image: np.ndarray) -> List[Dict]:
+    def detect(self, image: np.ndarray, conf: float = None) -> List[Dict]:
         victims = []
 
-        # track() instead of __call__ → persistent IDs via ByteTrack
-        det_results = self.detector.track(
+        # Use pose model for BOTH detection and tracking!
+        # This prevents duplicate bounding boxes from a separate object detection model
+        # and runs 2x faster by only using one YOLO pass instead of (Detection + Crop -> Pose).
+        det_results = self.pose_model.track(
             image,
-            conf=self.conf,
-            persist=True,           # keep tracker state between calls
+            conf=conf if conf is not None else self.conf,
+            persist=True,
             tracker="bytetrack.yaml",
             verbose=False,
-            classes=[self.PERSON_CLASS_ID]  # filter to persons only
+            imgsz=1280,
+            classes=[self.PERSON_CLASS_ID]
         )
 
         if not det_results or det_results[0].boxes is None:
@@ -46,6 +74,9 @@ class Detector:
         # track IDs may be None if no track assigned yet
         ids_raw = det_results[0].boxes.id
         track_ids = ids_raw.cpu().numpy().astype(int) if ids_raw is not None else list(range(len(boxes)))
+        
+        # Keypoints are extracted simultaneously with the track
+        kpts_list = det_results[0].keypoints.data.cpu().numpy() if det_results[0].keypoints is not None else [None] * len(boxes)
 
         h_img, w_img = image.shape[:2]
 
@@ -55,20 +86,25 @@ class Detector:
             x2, y2 = min(w_img, x2), min(h_img, y2)
             w, h   = x2 - x1, y2 - y1
 
-            if w < 20 or h < 20:
+            if w < 10 or h < 10:
                 continue
 
             pose = "unknown"
-            try:
-                crop = image[y1:y2, x1:x2]
-                if crop.size > 0:
-                    pose_res = self.pose_model(crop, verbose=False)
-                    if pose_res and pose_res[0].keypoints is not None:
-                        pose = self._infer_pose(
-                            pose_res[0].keypoints.data.cpu().numpy(), w, h
-                        )
-            except Exception:
-                pass
+            kpts = kpts_list[i] if i < len(kpts_list) else None
+
+            if kpts is not None:
+                try:
+                    # Offset absolute image keypoints to be relative to the bounding box
+                    # The ML classifier was trained on crops, so it expects (0,0) at the top-left of the box.
+                    rel_kpts = kpts.copy()
+                    # Only offset valid keypoints (confidence > 0)
+                    valid_mask = rel_kpts[:, 2] > 0.0
+                    rel_kpts[valid_mask, 0] -= x1
+                    rel_kpts[valid_mask, 1] -= y1
+                    
+                    pose = self._classify_pose(rel_kpts, w, h)
+                except Exception:
+                    pass
 
             victims.append({
                 "id":           int(track_ids[i]),   # ← persistent ByteTrack ID
@@ -83,9 +119,54 @@ class Detector:
         return victims
 
     # --------------------------------------------------
-    # POSE INFERENCE (Birds-Eye Euclidean Extension)
+    # POSE CLASSIFICATION — ML-first with heuristic fallback
     # --------------------------------------------------
-    def _infer_pose(self, kpts, w, h):
+    def _classify_pose(self, kpts, w, h) -> str:
+        """Classify pose using ML/Heuristic hybrid approach.
+        
+        The ML model was trained on strictly top-down synthetic data, which 
+        leads to low confidence / incorrect predictions on isometric views.
+        We combine ML probabilities with aspect-ratio heuristics.
+        """
+        pose_ml = "unknown"
+        prob_ml = 0.0
+        
+        # Try ML classifier first
+        if self.pose_classifier.available:
+            try:
+                probs = self.pose_classifier.predict_proba(kpts, float(w), float(h))
+                if probs:
+                    pose_ml = max(probs, key=probs.get)
+                    prob_ml = probs[pose_ml]
+            except Exception:
+                pass
+
+        # Fallback: heuristic
+        pose_he = self._infer_pose_heuristic(kpts, w, h)
+        
+        # Bounding box aspect ratio as a sanity check
+        aspect = w / max(h, 1.0)
+        
+        # Rule 1: Horizontally long boxes are almost certainly lying or sitting
+        if aspect > 1.35:
+            return "lying"
+            
+        # Rule 2: Vertically tall boxes are very likely standing, or maybe sitting. 
+        # Overrule the ML if it weakly predicts "lying" for a vertical box.
+        if aspect < 0.6 and pose_ml == "lying":
+            return pose_he # Fallback to heuristic standing/sitting
+
+        # Rule 3: If ML is reasonably confident, trust it
+        if prob_ml >= 0.55 and pose_ml != "unknown":
+            return pose_ml
+            
+        # Rule 4: If ML is weak, trust the heuristic fallback
+        return pose_he
+
+    # --------------------------------------------------
+    # HEURISTIC FALLBACK (Birds-Eye Euclidean Extension)
+    # --------------------------------------------------
+    def _infer_pose_heuristic(self, kpts, w, h):
         if kpts is None:
             return "unknown"
 
@@ -128,7 +209,6 @@ class Detector:
             return "unknown"
 
         # 1. Bounding box diagonal as relative scale
-        import math
         scale = math.sqrt(w**2 + h**2)
         if scale == 0: scale = 0.001
 
@@ -138,15 +218,24 @@ class Detector:
 
         # 3. Total Extension Ratio
         extension = (torso + legs) / scale
+        aspect = w / h if h > 0 else 1.0
 
-        # 4. Angled / Birds-Eye Heuristics
-        # A. If body is stretched across > 45% of its bounding box diagonal, it is lying down
-        if extension > 0.45:
+        # 4. Angled / Aerial Heuristics
+        # A. If box is significantly wider than tall, they are lying down.
+        if aspect > 1.35:
+            return "lying"
+            
+        # B. If box is tall (aspect < 0.8), they are likely standing. 
+        if aspect < 0.8:
+            return "standing"
+
+        # C. For square-ish boxes, rely on extension.
+        # If looking top-down at a standing person, torso+legs length is very small (foreshortening).
+        # If lying down, extension is close to 1.0.
+        if extension < 0.35:
+            return "standing"
+
+        if extension > 0.6:
             return "lying"
 
-        # B. If legs are occluded/missing (extension is small) but the box is extremely wide
-        # this indicates someone lying horizontally where the tracker only caught their upper body
-        if w > h * 1.35:
-            return "lying"
-
-        return "standing"
+        return "sitting"

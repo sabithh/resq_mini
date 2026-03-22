@@ -29,35 +29,41 @@ class ApiService {
   }
 
   // ── Detection ────────────────────────────────────────
-  static Future<http.StreamedResponse> sendImageForDetect(
+  static Future<http.Response> sendImageForDetect(
     File imageFile, {
     String droneId = 'DRONE_1',
   }) async {
     final base = await getBaseUrl();
-    final url  = Uri.parse('$base/detect?drone_id=$droneId');
+    final url  = Uri.parse('$base/detect');
     final req  = http.MultipartRequest('POST', url);
+    req.fields['drone_id'] = droneId;
     req.files.add(await http.MultipartFile.fromPath('file', imageFile.path));
-    return req.send().timeout(const Duration(seconds: 10));
+    final streamed = await req.send().timeout(const Duration(seconds: 10));
+    return http.Response.fromStream(streamed);
   }
 
-  static Future<http.StreamedResponse> sendImageForThermal(
+  static Future<http.Response> sendImageForThermal(
     File imageFile, {
     String mode     = 'clahe',
     String droneId  = 'DRONE_1',
   }) async {
     final base = await getBaseUrl();
-    final url  = Uri.parse('$base/detect-thermal?mode=$mode&drone_id=$droneId');
+    final url  = Uri.parse('$base/detect-thermal');
     final req  = http.MultipartRequest('POST', url);
+    req.fields['mode'] = mode;
+    req.fields['drone_id'] = droneId;
     req.files.add(await http.MultipartFile.fromPath('file', imageFile.path));
-    return req.send().timeout(const Duration(seconds: 10));
+    final streamed = await req.send().timeout(const Duration(seconds: 10));
+    return http.Response.fromStream(streamed);
   }
 
-  static Future<http.StreamedResponse> uploadVideo(File videoFile) async {
+  static Future<http.Response> uploadVideo(File videoFile) async {
     final base = await getBaseUrl();
     final url  = Uri.parse('$base/upload-video');
     final req  = http.MultipartRequest('POST', url);
     req.files.add(await http.MultipartFile.fromPath('file', videoFile.path));
-    return req.send().timeout(const Duration(seconds: 10));
+    final streamed = await req.send().timeout(const Duration(seconds: 10));
+    return http.Response.fromStream(streamed);
   }
 
   // ── Stream controls ──────────────────────────────────

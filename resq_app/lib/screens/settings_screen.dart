@@ -29,6 +29,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Future<void> _save() async {
     await ApiService.setBaseUrl(_urlCtrl.text.trim());
+    if (!mounted) return;
     setState(() {
       _status      = 'URL SAVED';
       _statusColor = Colors.greenAccent;
@@ -38,6 +39,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Future<void> _test() async {
     setState(() { _testing = true; _status = 'TESTING CONNECTION...'; _statusColor = Colors.orangeAccent; });
     final ok = await ApiService.testConnection();
+    if (!mounted) return;
     setState(() {
       _testing     = false;
       _status      = ok ? '✔ CONNECTED' : '✘ NO RESPONSE';
