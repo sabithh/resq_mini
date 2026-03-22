@@ -29,20 +29,22 @@ def compute_risk(victim: dict, drone_id: str = "DEFAULT") -> dict:
 
     # Pose-based risk (MOST IMPORTANT)
     if pose == "lying":
-        risk += 0.6
-    elif pose == "sitting":
-        risk += 0.35
+        risk += 0.7  # Increased to ensure high priority
+    elif pose in ["sitting", "collapsed"]: # Adding collapsed just in case
+        risk += 0.4
+    elif pose == "WOUND":
+        risk += 0.9  # Wounds are critical!
     elif pose == "unknown":
-        risk += 0.25
+        risk += 0.2
 
     # Area-based (small = far / buried)
-    if area < 15000:
+    if area < 12000:
         risk += 0.3
-    elif area < 30000:
+    elif area < 25000:
         risk += 0.15
 
     # Confidence-based (low confidence = harder to see = potential danger)
-    risk += (1 - confidence) * 0.2
+    risk += (1 - confidence) * 0.15
 
     # Clamp
     risk = min(risk, 1.0)
@@ -55,9 +57,9 @@ def compute_risk(victim: dict, drone_id: str = "DEFAULT") -> dict:
         smoothed_risk = sum(history) / len(history)
         risk = smoothed_risk
 
-    if risk >= 0.7:
+    if risk >= 0.65:
         priority = "HIGH"
-    elif risk >= 0.4:
+    elif risk >= 0.35:
         priority = "MEDIUM"
     else:
         priority = "LOW"

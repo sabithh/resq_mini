@@ -35,3 +35,26 @@ resq_app/android/app/debug/
 *.code-workspace
 .DS_Store
 Thumbs.db
+
+# Datasets and runs
+*.zip
+resq_backend/data/
+resq_backend/runs/
+runs/
+bus.jpg
+zidane.jpg
+
+
+*.zip
+
+data/
+
+runs/
+
+dummy.txt
+
+heuristic.py.py
+
+bus.jpg
+
+zidane.jpg

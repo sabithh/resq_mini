@@ -53,189 +53,185 @@ class Detector:
     def detect(self, image: np.ndarray, conf: float = None) -> List[Dict]:
         victims = []
 
-        # Use pose model for BOTH detection and tracking!
-        # This prevents duplicate bounding boxes from a separate object detection model
-        # and runs 2x faster by only using one YOLO pass instead of (Detection + Crop -> Pose).
-        det_results = self.pose_model.track(
+        # Run Pose Model for People (Class 0)
+        # This guarantees we get high-quality person detection (including lying down)
+        # and native keypoint extraction in a single pass.
+        pose_results = self.pose_model.track(
             image,
-            conf=conf if conf is not None else self.conf,
+            conf=self.conf,
             persist=True,
             tracker="bytetrack.yaml",
             verbose=False,
             imgsz=1280,
-            classes=[self.PERSON_CLASS_ID]
+            classes=[0]  # Only people
         )
 
-        if not det_results or det_results[0].boxes is None:
-            return victims
-
-        boxes   = det_results[0].boxes.xyxy.cpu().numpy()
-        confs   = det_results[0].boxes.conf.cpu().numpy()
-        # track IDs may be None if no track assigned yet
-        ids_raw = det_results[0].boxes.id
-        track_ids = ids_raw.cpu().numpy().astype(int) if ids_raw is not None else list(range(len(boxes)))
-        
-        # Keypoints are extracted simultaneously with the track
-        kpts_list = det_results[0].keypoints.data.cpu().numpy() if det_results[0].keypoints is not None else [None] * len(boxes)
+        # Run Detection Model for Wounds (Class 1)
+        # This catches our custom wound annotations without interfering with person tracking.
+        det_results = self.detector.track(
+            image,
+            conf=self.conf,
+            persist=True,
+            tracker="bytetrack.yaml",
+            verbose=False,
+            imgsz=1280,
+            classes=[1]  # Only wounds
+        )
 
         h_img, w_img = image.shape[:2]
 
-        for i, box in enumerate(boxes):
-            x1, y1, x2, y2 = map(int, box)
-            x1, y1 = max(0, x1), max(0, y1)
-            x2, y2 = min(w_img, x2), min(h_img, y2)
-            w, h   = x2 - x1, y2 - y1
+        # 1. Process People & Poses
+        if pose_results and pose_results[0].boxes is not None:
+            boxes = pose_results[0].boxes.xyxy.cpu().numpy()
+            confs = pose_results[0].boxes.conf.cpu().numpy()
+            ids_raw = pose_results[0].boxes.id
+            track_ids = ids_raw.cpu().numpy().astype(int) if ids_raw is not None else list(range(len(boxes)))
+            
+            kpts_list = pose_results[0].keypoints.data.cpu().numpy() if (hasattr(pose_results[0], 'keypoints') and pose_results[0].keypoints is not None) else [None] * len(boxes)
 
-            if w < 10 or h < 10:
-                continue
+            for i, box in enumerate(boxes):
+                x1, y1, x2, y2 = map(int, box)
+                x1, y1 = max(0, x1), max(0, y1)
+                x2, y2 = min(w_img, x2), min(h_img, y2)
+                w, h = x2 - x1, y2 - y1
 
-            pose = "unknown"
-            kpts = kpts_list[i] if i < len(kpts_list) else None
+                if w < 10 or h < 10:
+                    continue
 
-            if kpts is not None:
-                try:
-                    # Offset absolute image keypoints to be relative to the bounding box
-                    # The ML classifier was trained on crops, so it expects (0,0) at the top-left of the box.
-                    rel_kpts = kpts.copy()
-                    # Only offset valid keypoints (confidence > 0)
-                    valid_mask = rel_kpts[:, 2] > 0.0
-                    rel_kpts[valid_mask, 0] -= x1
-                    rel_kpts[valid_mask, 1] -= y1
-                    
-                    pose = self._classify_pose(rel_kpts, w, h)
-                except Exception:
-                    pass
+                pose = "unknown"
+                kpts = kpts_list[i] if i < len(kpts_list) else None
 
-            victims.append({
-                "id":           int(track_ids[i]),   # ← persistent ByteTrack ID
-                "confidence":   round(float(confs[i]), 3),
-                "bbox_xyxy":    [x1, y1, x2, y2],
-                "center":       [x1 + w // 2, y1 + h // 2],
-                "area":         w * h,
-                "aspect_ratio": round(w / h, 3) if h > 0 else 0.0,
-                "pose":         pose
-            })
+                if kpts is not None and len(kpts) > 0:
+                    try:
+                        # Offset absolute image keypoints to be relative to the bounding box
+                        rel_kpts = kpts.copy()
+                        valid_mask = rel_kpts[:, 2] > 0.0
+                        rel_kpts[valid_mask, 0] -= x1
+                        rel_kpts[valid_mask, 1] -= y1
+                        
+                        pose = self._classify_pose(rel_kpts, w, h)
+                    except Exception:
+                        pass
+                else:
+                    aspect = w / max(h, 1.0)
+                    if aspect > 1.2:
+                        pose = "lying"
+                    elif aspect < 0.8:
+                        pose = "standing"
+
+                victims.append({
+                    "id": int(track_ids[i]),
+                    "confidence": round(float(confs[i]), 3),
+                    "bbox_xyxy": [x1, y1, x2, y2],
+                    "center": [x1 + w // 2, y1 + h // 2],
+                    "area": w * h,
+                    "aspect_ratio": round(w / h, 3) if h > 0 else 0.0,
+                    "pose": pose
+                })
+
+        # 2. Process Wounds
+        if det_results and det_results[0].boxes is not None:
+            boxes = det_results[0].boxes.xyxy.cpu().numpy()
+            confs = det_results[0].boxes.conf.cpu().numpy()
+            ids_raw = det_results[0].boxes.id
+            # Offset wound IDs by 10000 so they don't collide with person IDs in ByteTrack
+            track_ids = (ids_raw.cpu().numpy().astype(int) + 10000) if ids_raw is not None else [x + 10000 for x in range(len(boxes))]
+
+            for i, box in enumerate(boxes):
+                x1, y1, x2, y2 = map(int, box)
+                x1, y1 = max(0, x1), max(0, y1)
+                x2, y2 = min(w_img, x2), min(h_img, y2)
+                w, h = x2 - x1, y2 - y1
+
+                if w < 10 or h < 10:
+                    continue
+
+                victims.append({
+                    "id": int(track_ids[i]), 
+                    "confidence": round(float(confs[i]), 3),
+                    "bbox_xyxy": [x1, y1, x2, y2],
+                    "center": [x1 + w // 2, y1 + h // 2],
+                    "area": w * h,
+                    "aspect_ratio": round(w / h, 3) if h > 0 else 0.0,
+                    "pose": "WOUND"
+                })
 
         return victims
 
     # --------------------------------------------------
     # POSE CLASSIFICATION — ML-first with heuristic fallback
     # --------------------------------------------------
-    def _classify_pose(self, kpts, w, h) -> str:
-        """Classify pose using ML/Heuristic hybrid approach.
-        
-        The ML model was trained on strictly top-down synthetic data, which 
-        leads to low confidence / incorrect predictions on isometric views.
-        We combine ML probabilities with aspect-ratio heuristics.
-        """
-        pose_ml = "unknown"
-        prob_ml = 0.0
-        
-        # Try ML classifier first
-        if self.pose_classifier.available:
-            try:
-                probs = self.pose_classifier.predict_proba(kpts, float(w), float(h))
-                if probs:
-                    pose_ml = max(probs, key=probs.get)
-                    prob_ml = probs[pose_ml]
-            except Exception:
-                pass
+    def _fallback_aspect(self, w, h):
+        aspect = w / max(h, 1.0)
+        if aspect > 1.3: return "lying"
+        if aspect < 0.8: return "standing"
+        return "sitting"
 
-        # Fallback: heuristic
-        pose_he = self._infer_pose_heuristic(kpts, w, h)
+    def _classify_pose(self, kpts, w, h) -> str:
+        """Classify pose using keypoint geometry (Y coordinates, angles)."""
+        if kpts is None or len(kpts) == 0:
+            return self._fallback_aspect(w, h)
+            
+        kpts = np.asarray(kpts)
+        if kpts.ndim == 3: kpts = kpts[0]
+        if kpts.shape[0] < 17: return self._fallback_aspect(w, h)
+
+        def get_pt(idx1, idx2):
+            p1 = kpts[idx1] if kpts[idx1][2] > 0.3 else None
+            p2 = kpts[idx2] if kpts[idx2][2] > 0.3 else None
+            if p1 is None and p2 is None: return None
+            if p1 is not None and p2 is not None:
+                return ((p1[0]+p2[0])/2.0, (p1[1]+p2[1])/2.0)
+            return p1[:2] if p1 is not None else p2[:2]
+
+        neck   = get_pt(5, 6)
+        pelvis = get_pt(11, 12)
+        knee   = get_pt(13, 14)
+        ankle  = get_pt(15, 16)
         
-        # Bounding box aspect ratio as a sanity check
         aspect = w / max(h, 1.0)
         
-        # Rule 1: Horizontally long boxes are almost certainly lying or sitting
-        if aspect > 1.35:
+        if not neck or not pelvis:
+            return self._fallback_aspect(w, h)
+            
+        # Torso logic
+        torso_dy = pelvis[1] - neck[1]
+        torso_len = math.hypot(pelvis[0] - neck[0], torso_dy)
+        if torso_len < 1.0: torso_len = 1.0
+        
+        # 1.0 = vertical, 0.0 = horizontal
+        torso_verticality = torso_dy / torso_len  
+        
+        # 1. LYING
+        if torso_verticality < 0.35:
             return "lying"
+
+        # 2. SITTING vs STANDING
+        leg_dy = 0
+        leg_len = 0
+        if ankle:
+            leg_dy = ankle[1] - pelvis[1]
+            leg_len = math.hypot(ankle[0] - pelvis[0], leg_dy)
+        elif knee:
+            leg_dy = knee[1] - pelvis[1]
+            leg_len = math.hypot(knee[0] - pelvis[0], leg_dy)
             
-        # Rule 2: Vertically tall boxes are very likely standing, or maybe sitting. 
-        # Overrule the ML if it weakly predicts "lying" for a vertical box.
-        if aspect < 0.6 and pose_ml == "lying":
-            return pose_he # Fallback to heuristic standing/sitting
-
-        # Rule 3: If ML is reasonably confident, trust it
-        if prob_ml >= 0.55 and pose_ml != "unknown":
-            return pose_ml
-            
-        # Rule 4: If ML is weak, trust the heuristic fallback
-        return pose_he
-
-    # --------------------------------------------------
-    # HEURISTIC FALLBACK (Birds-Eye Euclidean Extension)
-    # --------------------------------------------------
-    def _infer_pose_heuristic(self, kpts, w, h):
-        if kpts is None:
-            return "unknown"
-
-        kpts = np.asarray(kpts)
-        if kpts.ndim == 3:
-            kpts = kpts[0]
-        if kpts.shape[0] < 17:  # Need ankles (15, 16)
-            return "unknown"
-
-        try:
-            # Shoulders (5, 6) -> Neck
-            l_sh = kpts[5]
-            r_sh = kpts[6]
-            if l_sh[2] < 0.2 and r_sh[2] < 0.2: return "unknown"
-            
-            # Hips (11, 12) -> Pelvis
-            l_hp = kpts[11]
-            r_hp = kpts[12]
-            if l_hp[2] < 0.2 and r_hp[2] < 0.2: return "unknown"
-
-            # Ankles (15, 16)
-            l_an = kpts[15]
-            r_an = kpts[16]
-
-            # Midpoints
-            neck_x, neck_y = (l_sh[0]+r_sh[0])/2, (l_sh[1]+r_sh[1])/2
-            pelv_x, pelv_y = (l_hp[0]+r_hp[0])/2, (l_hp[1]+r_hp[1])/2
-            
-            # Use the most confident ankle, or average if both good
-            if l_an[2] > 0.2 and r_an[2] > 0.2:
-                ank_x, ank_y = (l_an[0]+r_an[0])/2, (l_an[1]+r_an[1])/2
-            elif l_an[2] > 0.2:
-                ank_x, ank_y = l_an[0], l_an[1]
-            elif r_an[2] > 0.2:
-                ank_x, ank_y = r_an[0], r_an[1]
+        if leg_len > 1.0:
+            leg_verticality = leg_dy / leg_len
+            # Both torso and legs point clearly down
+            if torso_verticality > 0.4 and leg_verticality > 0.4:
+                return "standing" if aspect < 0.85 else "sitting"
+            # Torso upright but legs are horizontal/tucked/pointed sideways
+            elif torso_verticality > 0.4 and leg_verticality <= 0.4:
+                return "sitting"
+        
+        # 3. Fallback without valid leg data
+        if aspect < 0.85:
+            return "standing"
+        elif aspect > 1.1:
+            if torso_verticality > 0.4:
+                return "sitting"
             else:
-                ank_x, ank_y = pelv_x, pelv_y # Fallback: Leg length 0 (foreshortened)
-
-        except Exception:
-            return "unknown"
-
-        # 1. Bounding box diagonal as relative scale
-        scale = math.sqrt(w**2 + h**2)
-        if scale == 0: scale = 0.001
-
-        # 2. Euclidean Physical Extensions
-        torso = math.sqrt((neck_x - pelv_x)**2 + (neck_y - pelv_y)**2)
-        legs  = math.sqrt((pelv_x - ank_x)**2  + (pelv_y - ank_y)**2)
-
-        # 3. Total Extension Ratio
-        extension = (torso + legs) / scale
-        aspect = w / h if h > 0 else 1.0
-
-        # 4. Angled / Aerial Heuristics
-        # A. If box is significantly wider than tall, they are lying down.
-        if aspect > 1.35:
-            return "lying"
-            
-        # B. If box is tall (aspect < 0.8), they are likely standing. 
-        if aspect < 0.8:
-            return "standing"
-
-        # C. For square-ish boxes, rely on extension.
-        # If looking top-down at a standing person, torso+legs length is very small (foreshortening).
-        # If lying down, extension is close to 1.0.
-        if extension < 0.35:
-            return "standing"
-
-        if extension > 0.6:
-            return "lying"
-
+                return "lying"
+                
         return "sitting"

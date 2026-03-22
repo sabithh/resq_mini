@@ -34,11 +34,14 @@ Phase 2: Environment Augmentation Pipeline
 - Generate augmented copies of the dataset and update their labels accordingly.
 
 Phase 3: Multi-Stage Training
-Step 3.1: Train combined Object Detection (Person + Wound)
-  `yolo detect train model=yolov8m-aerial.pt data=combined_det.yaml epochs=100`
-
-Step 3.2: Train Pose Estimation on the augmented Person dataset
-  `yolo pose train model=yolov8m-pose.pt data=combined_pose.yaml epochs=100`
+Step 3.1: Pose Model Fine-Tuning (Adding wounds + environments)
+  Because you ALREADY trained "yolov8m-aerial.pt" on VisDrone, we don't need to re-train
+  the base VisDrone dataset. 
+  
+  Instead, we take your existing pose model and teach it about Class 1 (wounds)
+  and the extreme environments (haze, dark) generated in Phase 2.
+  
+  `yolo pose train model=yolov8m-pose.pt data=data/combined_dataset/dataset.yaml epochs=50 lr0=0.001`
 
 Phase 4: Integration
 - Update `detector.py` to handle the new wound class and feed that into

@@ -33,6 +33,6 @@ ALERT_COOLDOWN_MINUTES = int(os.environ.get("ALERT_COOLDOWN_MINUTES", "1"))
 
 # ── Model paths ───────────────────────────────────────
 # Use fine-tuned aerial model when available, fall back to stock COCO
-DETECTION_MODEL = os.environ.get("DETECTION_MODEL", "yolov8m-aerial.pt")
+DETECTION_MODEL = os.environ.get("DETECTION_MODEL", "yolov8m-final-rescue.pt")
 POSE_MODEL      = os.environ.get("POSE_MODEL", "yolov8m-pose.pt")
 POSE_CLASSIFIER = os.environ.get("POSE_CLASSIFIER", "pose_classifier.pkl")
