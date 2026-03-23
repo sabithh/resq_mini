@@ -1,0 +1,11 @@
+ultralytics
+opencv-python
+numpy
+pillow
+fastapi
+uvicorn[standard]
+lap>=0.5.12
+python-dotenv
+requests
+websockets
+scikit-learn
