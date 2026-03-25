@@ -356,7 +356,10 @@ async def detect_image(
 
     h, w = image.shape[:2]
     detector = get_detector(drone_id)
-    victims = [assign_grid(compute_risk(d, drone_id=drone_id), w, h) for d in detector.detect(image)]
+    victims = [
+        assign_grid(compute_risk(d, drone_id=drone_id, frame_width=w, frame_height=h), w, h)
+        for d in detector.detect(image)
+    ]
 
     drone_victims[drone_id] = victims
 
@@ -389,7 +392,10 @@ async def detect_thermal(
     h, w = processed.shape[:2]
     detector = get_detector(drone_id)
     # Use low confidence (0.05) for thermal images because YOLOv8 standard model struggles with thermal blobs
-    victims = [assign_grid(compute_risk(d, drone_id=drone_id), w, h) for d in detector.detect(processed, conf=0.05)]
+    victims = [
+        assign_grid(compute_risk(d, drone_id=drone_id, frame_width=w, frame_height=h), w, h)
+        for d in detector.detect(processed, conf=0.05)
+    ]
 
     drone_victims[drone_id] = victims
 
@@ -441,7 +447,10 @@ def video_worker(drone_id: str = "DRONE_1"):
         if frame_count % FRAME_SKIP == 0:
             h, w = frame.shape[:2]
             detector = get_detector(drone_id)
-            victims = [assign_grid(compute_risk(d, drone_id=drone_id), w, h) for d in detector.detect(frame)]
+            victims = [
+                assign_grid(compute_risk(d, drone_id=drone_id, frame_width=w, frame_height=h), w, h)
+                for d in detector.detect(frame)
+            ]
             drone_victims[drone_id] = victims
             annotated = draw_annotations(frame, victims)
             cv2.imwrite(str(STATIC_DIR / f"latest_annotated_{drone_id}.jpg"), annotated)

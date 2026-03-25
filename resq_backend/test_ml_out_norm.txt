@@ -1,4 +1,0 @@
-﻿Stand predict (relative kpts, vertical): standing
-Lying predict (relative kpts, horizontal): lying
-Stand predict (absolute kpts, vertical): sitting
-Lying predict (absolute kpts, horizontal): sitting
