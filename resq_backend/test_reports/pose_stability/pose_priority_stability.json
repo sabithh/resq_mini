@@ -1,0 +1,99 @@
+{
+  "images_evaluated": 120,
+  "iou_threshold": 0.5,
+  "summary": [
+    {
+      "augmentation": "gaussian_noise",
+      "originals": 71,
+      "matched": 43,
+      "unmatched": 28,
+      "match_rate": 0.6056,
+      "pose_agreement": 0.8372,
+      "pose_flip_rate": 0.1628,
+      "priority_agreement": 0.814,
+      "priority_flip_rate": 0.186
+    },
+    {
+      "augmentation": "gaussian_blur",
+      "originals": 71,
+      "matched": 57,
+      "unmatched": 14,
+      "match_rate": 0.8028,
+      "pose_agreement": 0.8596,
+      "pose_flip_rate": 0.1404,
+      "priority_agreement": 0.8596,
+      "priority_flip_rate": 0.1404
+    },
+    {
+      "augmentation": "motion_blur",
+      "originals": 71,
+      "matched": 51,
+      "unmatched": 20,
+      "match_rate": 0.7183,
+      "pose_agreement": 0.8627,
+      "pose_flip_rate": 0.1373,
+      "priority_agreement": 0.8431,
+      "priority_flip_rate": 0.1569
+    },
+    {
+      "augmentation": "low_light",
+      "originals": 71,
+      "matched": 51,
+      "unmatched": 20,
+      "match_rate": 0.7183,
+      "pose_agreement": 0.9608,
+      "pose_flip_rate": 0.0392,
+      "priority_agreement": 0.902,
+      "priority_flip_rate": 0.098
+    }
+  ],
+  "pose_flip_pairs": [
+    {
+      "from": "lying",
+      "to": "standing",
+      "count": 16
+    },
+    {
+      "from": "standing",
+      "to": "sitting",
+      "count": 4
+    },
+    {
+      "from": "standing",
+      "to": "lying",
+      "count": 3
+    },
+    {
+      "from": "sitting",
+      "to": "standing",
+      "count": 1
+    }
+  ],
+  "priority_flip_pairs": [
+    {
+      "from": "HIGH",
+      "to": "LOW",
+      "count": 16
+    },
+    {
+      "from": "LOW",
+      "to": "HIGH",
+      "count": 6
+    },
+    {
+      "from": "LOW",
+      "to": "MEDIUM",
+      "count": 5
+    },
+    {
+      "from": "MEDIUM",
+      "to": "LOW",
+      "count": 1
+    },
+    {
+      "from": "HIGH",
+      "to": "MEDIUM",
+      "count": 1
+    }
+  ]
+}

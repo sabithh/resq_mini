@@ -358,7 +358,7 @@ async def detect_image(
     detector = get_detector(drone_id)
     victims = [
         assign_grid(compute_risk(d, drone_id=drone_id, frame_width=w, frame_height=h), w, h)
-        for d in detector.detect(image)
+        for d in detector.detect(image, adaptive=True)
     ]
 
     drone_victims[drone_id] = victims
@@ -449,7 +449,7 @@ def video_worker(drone_id: str = "DRONE_1"):
             detector = get_detector(drone_id)
             victims = [
                 assign_grid(compute_risk(d, drone_id=drone_id, frame_width=w, frame_height=h), w, h)
-                for d in detector.detect(frame)
+                for d in detector.detect(frame, adaptive=True)
             ]
             drone_victims[drone_id] = victims
             annotated = draw_annotations(frame, victims)

@@ -1,0 +1,752 @@
+[
+  {
+    "id": 1,
+    "confidence": 0.859,
+    "bbox_xyxy": [
+      0,
+      835,
+      63,
+      969
+    ],
+    "center": [
+      31,
+      902
+    ],
+    "area": 8442,
+    "aspect_ratio": 0.47,
+    "pose": "standing",
+    "pose_confidence": 0.523,
+    "risk_score": 0.228,
+    "priority": "LOW",
+    "grid": [
+      7,
+      0
+    ],
+    "image_name": "3b627ab7-01ee-4a84-b20a-3487bd9374e8.jpg"
+  },
+  {
+    "id": 2,
+    "confidence": 0.715,
+    "bbox_xyxy": [
+      370,
+      584,
+      410,
+      669
+    ],
+    "center": [
+      390,
+      626
+    ],
+    "area": 3400,
+    "aspect_ratio": 0.471,
+    "pose": "lying",
+    "pose_confidence": 0.515,
+    "risk_score": 1.0,
+    "priority": "HIGH",
+    "grid": [
+      4,
+      5
+    ],
+    "image_name": "3b627ab7-01ee-4a84-b20a-3487bd9374e8.jpg"
+  },
+  {
+    "id": 3,
+    "confidence": 0.416,
+    "bbox_xyxy": [
+      281,
+      584,
+      374,
+      624
+    ],
+    "center": [
+      327,
+      604
+    ],
+    "area": 3720,
+    "aspect_ratio": 2.325,
+    "pose": "lying",
+    "pose_confidence": 0.611,
+    "risk_score": 1.0,
+    "priority": "HIGH",
+    "grid": [
+      4,
+      4
+    ],
+    "image_name": "3b627ab7-01ee-4a84-b20a-3487bd9374e8.jpg"
+  },
+  {
+    "id": 0,
+    "confidence": 0.927,
+    "bbox_xyxy": [
+      491,
+      798,
+      544,
+      913
+    ],
+    "center": [
+      517,
+      855
+    ],
+    "area": 6095,
+    "aspect_ratio": 0.461,
+    "pose": "lying",
+    "pose_confidence": 0.562,
+    "risk_score": 0.914,
+    "priority": "HIGH",
+    "grid": [
+      6,
+      7
+    ],
+    "image_name": "4c998fd2-3187-4a7c-8c0b-4cffb262f422.jpg"
+  },
+  {
+    "id": 1,
+    "confidence": 0.898,
+    "bbox_xyxy": [
+      270,
+      787,
+      312,
+      888
+    ],
+    "center": [
+      291,
+      837
+    ],
+    "area": 4242,
+    "aspect_ratio": 0.416,
+    "pose": "lying",
+    "pose_confidence": 0.47,
+    "risk_score": 0.614,
+    "priority": "MEDIUM",
+    "grid": [
+      6,
+      4
+    ],
+    "image_name": "4c998fd2-3187-4a7c-8c0b-4cffb262f422.jpg"
+  },
+  {
+    "id": 2,
+    "confidence": 0.893,
+    "bbox_xyxy": [
+      216,
+      558,
+      267,
+      656
+    ],
+    "center": [
+      241,
+      607
+    ],
+    "area": 4998,
+    "aspect_ratio": 0.52,
+    "pose": "standing",
+    "pose_confidence": 0.495,
+    "risk_score": 0.613,
+    "priority": "MEDIUM",
+    "grid": [
+      4,
+      3
+    ],
+    "image_name": "4c998fd2-3187-4a7c-8c0b-4cffb262f422.jpg"
+  },
+  {
+    "id": 3,
+    "confidence": 0.858,
+    "bbox_xyxy": [
+      183,
+      524,
+      213,
+      625
+    ],
+    "center": [
+      198,
+      574
+    ],
+    "area": 3030,
+    "aspect_ratio": 0.297,
+    "pose": "standing",
+    "pose_confidence": 0.6,
+    "risk_score": 0.685,
+    "priority": "HIGH",
+    "grid": [
+      4,
+      2
+    ],
+    "image_name": "4c998fd2-3187-4a7c-8c0b-4cffb262f422.jpg"
+  },
+  {
+    "id": 4,
+    "confidence": 0.791,
+    "bbox_xyxy": [
+      21,
+      587,
+      53,
+      672
+    ],
+    "center": [
+      37,
+      629
+    ],
+    "area": 2720,
+    "aspect_ratio": 0.376,
+    "pose": "standing",
+    "pose_confidence": 0.56,
+    "risk_score": 0.384,
+    "priority": "MEDIUM",
+    "grid": [
+      4,
+      0
+    ],
+    "image_name": "4c998fd2-3187-4a7c-8c0b-4cffb262f422.jpg"
+  },
+  {
+    "id": 5,
+    "confidence": 0.615,
+    "bbox_xyxy": [
+      261,
+      544,
+      285,
+      630
+    ],
+    "center": [
+      273,
+      587
+    ],
+    "area": 2064,
+    "aspect_ratio": 0.279,
+    "pose": "standing",
+    "pose_confidence": 0.735,
+    "risk_score": 0.39,
+    "priority": "MEDIUM",
+    "grid": [
+      4,
+      3
+    ],
+    "image_name": "4c998fd2-3187-4a7c-8c0b-4cffb262f422.jpg"
+  },
+  {
+    "id": 6,
+    "confidence": 0.324,
+    "bbox_xyxy": [
+      513,
+      330,
+      543,
+      397
+    ],
+    "center": [
+      528,
+      363
+    ],
+    "area": 2010,
+    "aspect_ratio": 0.448,
+    "pose": "standing",
+    "pose_confidence": 0.608,
+    "risk_score": 0.448,
+    "priority": "MEDIUM",
+    "grid": [
+      2,
+      7
+    ],
+    "image_name": "4c998fd2-3187-4a7c-8c0b-4cffb262f422.jpg"
+  },
+  {
+    "id": 7,
+    "confidence": 0.223,
+    "bbox_xyxy": [
+      534,
+      323,
+      557,
+      398
+    ],
+    "center": [
+      545,
+      360
+    ],
+    "area": 1725,
+    "aspect_ratio": 0.307,
+    "pose": "standing",
+    "pose_confidence": 0.786,
+    "risk_score": 0.442,
+    "priority": "MEDIUM",
+    "grid": [
+      2,
+      7
+    ],
+    "image_name": "4c998fd2-3187-4a7c-8c0b-4cffb262f422.jpg"
+  },
+  {
+    "id": 0,
+    "confidence": 0.302,
+    "bbox_xyxy": [
+      1135,
+      616,
+      1190,
+      678
+    ],
+    "center": [
+      1162,
+      647
+    ],
+    "area": 3410,
+    "aspect_ratio": 0.887,
+    "pose": "sitting",
+    "pose_confidence": 0.704,
+    "risk_score": 0.877,
+    "priority": "HIGH",
+    "grid": [
+      8,
+      8
+    ],
+    "image_name": "606dd9ab-d68d-45ee-a5dc-3adb97296744.jpg"
+  },
+  {
+    "id": 0,
+    "confidence": 0.906,
+    "bbox_xyxy": [
+      450,
+      143,
+      555,
+      461
+    ],
+    "center": [
+      502,
+      302
+    ],
+    "area": 33390,
+    "aspect_ratio": 0.33,
+    "pose": "standing",
+    "pose_confidence": 0.394,
+    "risk_score": 0.614,
+    "priority": "MEDIUM",
+    "grid": [
+      3,
+      3
+    ],
+    "image_name": "844c75ae-a70e-4696-9fd5-9bb1b03b8b49.jpg"
+  },
+  {
+    "id": 1,
+    "confidence": 0.901,
+    "bbox_xyxy": [
+      566,
+      164,
+      666,
+      446
+    ],
+    "center": [
+      616,
+      305
+    ],
+    "area": 28200,
+    "aspect_ratio": 0.355,
+    "pose": "lying",
+    "pose_confidence": 0.4,
+    "risk_score": 0.672,
+    "priority": "HIGH",
+    "grid": [
+      3,
+      4
+    ],
+    "image_name": "844c75ae-a70e-4696-9fd5-9bb1b03b8b49.jpg"
+  },
+  {
+    "id": 2,
+    "confidence": 0.897,
+    "bbox_xyxy": [
+      661,
+      136,
+      764,
+      461
+    ],
+    "center": [
+      712,
+      298
+    ],
+    "area": 33475,
+    "aspect_ratio": 0.317,
+    "pose": "standing",
+    "pose_confidence": 0.407,
+    "risk_score": 0.438,
+    "priority": "MEDIUM",
+    "grid": [
+      3,
+      5
+    ],
+    "image_name": "844c75ae-a70e-4696-9fd5-9bb1b03b8b49.jpg"
+  },
+  {
+    "id": 3,
+    "confidence": 0.866,
+    "bbox_xyxy": [
+      877,
+      360,
+      1189,
+      468
+    ],
+    "center": [
+      1033,
+      414
+    ],
+    "area": 33696,
+    "aspect_ratio": 2.889,
+    "pose": "sitting",
+    "pose_confidence": 0.57,
+    "risk_score": 0.614,
+    "priority": "MEDIUM",
+    "grid": [
+      5,
+      7
+    ],
+    "image_name": "844c75ae-a70e-4696-9fd5-9bb1b03b8b49.jpg"
+  },
+  {
+    "id": 4,
+    "confidence": 0.62,
+    "bbox_xyxy": [
+      862,
+      479,
+      1371,
+      650
+    ],
+    "center": [
+      1116,
+      564
+    ],
+    "area": 87039,
+    "aspect_ratio": 2.977,
+    "pose": "lying",
+    "pose_confidence": 0.447,
+    "risk_score": 0.604,
+    "priority": "MEDIUM",
+    "grid": [
+      7,
+      7
+    ],
+    "image_name": "844c75ae-a70e-4696-9fd5-9bb1b03b8b49.jpg"
+  },
+  {
+    "id": 5,
+    "confidence": 0.281,
+    "bbox_xyxy": [
+      627,
+      162,
+      676,
+      376
+    ],
+    "center": [
+      651,
+      269
+    ],
+    "area": 10486,
+    "aspect_ratio": 0.229,
+    "pose": "standing",
+    "pose_confidence": 0.469,
+    "risk_score": 0.356,
+    "priority": "MEDIUM",
+    "grid": [
+      3,
+      4
+    ],
+    "image_name": "844c75ae-a70e-4696-9fd5-9bb1b03b8b49.jpg"
+  },
+  {
+    "id": 0,
+    "confidence": 0.731,
+    "bbox_xyxy": [
+      105,
+      510,
+      406,
+      653
+    ],
+    "center": [
+      255,
+      581
+    ],
+    "area": 43043,
+    "aspect_ratio": 2.105,
+    "pose": "lying",
+    "pose_confidence": 0.442,
+    "risk_score": 0.662,
+    "priority": "HIGH",
+    "grid": [
+      4,
+      3
+    ],
+    "image_name": "ad56ca21-c0cc-44a2-a18d-a58922e21058.jpg"
+  },
+  {
+    "id": 1,
+    "confidence": 0.644,
+    "bbox_xyxy": [
+      278,
+      549,
+      449,
+      778
+    ],
+    "center": [
+      363,
+      663
+    ],
+    "area": 39159,
+    "aspect_ratio": 0.747,
+    "pose": "lying",
+    "pose_confidence": 0.558,
+    "risk_score": 0.705,
+    "priority": "HIGH",
+    "grid": [
+      5,
+      5
+    ],
+    "image_name": "ad56ca21-c0cc-44a2-a18d-a58922e21058.jpg"
+  },
+  {
+    "id": 2,
+    "confidence": 0.159,
+    "bbox_xyxy": [
+      112,
+      525,
+      433,
+      681
+    ],
+    "center": [
+      272,
+      603
+    ],
+    "area": 50076,
+    "aspect_ratio": 2.058,
+    "pose": "lying",
+    "pose_confidence": 0.674,
+    "risk_score": 0.545,
+    "priority": "MEDIUM",
+    "grid": [
+      4,
+      3
+    ],
+    "image_name": "ad56ca21-c0cc-44a2-a18d-a58922e21058.jpg"
+  },
+  {
+    "id": 0,
+    "confidence": 0.917,
+    "bbox_xyxy": [
+      1078,
+      458,
+      1150,
+      587
+    ],
+    "center": [
+      1114,
+      522
+    ],
+    "area": 9288,
+    "aspect_ratio": 0.558,
+    "pose": "lying",
+    "pose_confidence": 0.547,
+    "risk_score": 0.713,
+    "priority": "HIGH",
+    "grid": [
+      6,
+      7
+    ],
+    "image_name": "cfefa887-57f5-4f6c-b97a-c594335e955d.jpg"
+  },
+  {
+    "id": 1,
+    "confidence": 0.908,
+    "bbox_xyxy": [
+      1030,
+      444,
+      1100,
+      562
+    ],
+    "center": [
+      1065,
+      503
+    ],
+    "area": 8260,
+    "aspect_ratio": 0.593,
+    "pose": "lying",
+    "pose_confidence": 0.442,
+    "risk_score": 0.75,
+    "priority": "HIGH",
+    "grid": [
+      6,
+      7
+    ],
+    "image_name": "cfefa887-57f5-4f6c-b97a-c594335e955d.jpg"
+  },
+  {
+    "id": 2,
+    "confidence": 0.878,
+    "bbox_xyxy": [
+      1124,
+      295,
+      1180,
+      404
+    ],
+    "center": [
+      1152,
+      349
+    ],
+    "area": 6104,
+    "aspect_ratio": 0.514,
+    "pose": "standing",
+    "pose_confidence": 0.437,
+    "risk_score": 0.483,
+    "priority": "MEDIUM",
+    "grid": [
+      4,
+      8
+    ],
+    "image_name": "cfefa887-57f5-4f6c-b97a-c594335e955d.jpg"
+  },
+  {
+    "id": 3,
+    "confidence": 0.878,
+    "bbox_xyxy": [
+      1167,
+      300,
+      1213,
+      421
+    ],
+    "center": [
+      1190,
+      360
+    ],
+    "area": 5566,
+    "aspect_ratio": 0.38,
+    "pose": "standing",
+    "pose_confidence": 0.592,
+    "risk_score": 0.515,
+    "priority": "MEDIUM",
+    "grid": [
+      4,
+      8
+    ],
+    "image_name": "cfefa887-57f5-4f6c-b97a-c594335e955d.jpg"
+  },
+  {
+    "id": 4,
+    "confidence": 0.696,
+    "bbox_xyxy": [
+      790,
+      518,
+      860,
+      598
+    ],
+    "center": [
+      825,
+      558
+    ],
+    "area": 5600,
+    "aspect_ratio": 0.875,
+    "pose": "standing",
+    "pose_confidence": 0.539,
+    "risk_score": 0.486,
+    "priority": "MEDIUM",
+    "grid": [
+      7,
+      5
+    ],
+    "image_name": "cfefa887-57f5-4f6c-b97a-c594335e955d.jpg"
+  },
+  {
+    "id": 5,
+    "confidence": 0.376,
+    "bbox_xyxy": [
+      841,
+      506,
+      898,
+      601
+    ],
+    "center": [
+      869,
+      553
+    ],
+    "area": 5415,
+    "aspect_ratio": 0.6,
+    "pose": "standing",
+    "pose_confidence": 0.549,
+    "risk_score": 0.336,
+    "priority": "MEDIUM",
+    "grid": [
+      7,
+      6
+    ],
+    "image_name": "cfefa887-57f5-4f6c-b97a-c594335e955d.jpg"
+  },
+  {
+    "id": 6,
+    "confidence": 0.347,
+    "bbox_xyxy": [
+      536,
+      493,
+      614,
+      566
+    ],
+    "center": [
+      575,
+      529
+    ],
+    "area": 5694,
+    "aspect_ratio": 1.068,
+    "pose": "lying",
+    "pose_confidence": 0.571,
+    "risk_score": 0.724,
+    "priority": "HIGH",
+    "grid": [
+      6,
+      4
+    ],
+    "image_name": "cfefa887-57f5-4f6c-b97a-c594335e955d.jpg"
+  },
+  {
+    "id": 7,
+    "confidence": 0.335,
+    "bbox_xyxy": [
+      624,
+      372,
+      663,
+      446
+    ],
+    "center": [
+      643,
+      409
+    ],
+    "area": 2886,
+    "aspect_ratio": 0.527,
+    "pose": "lying",
+    "pose_confidence": 0.472,
+    "risk_score": 0.721,
+    "priority": "HIGH",
+    "grid": [
+      5,
+      4
+    ],
+    "image_name": "cfefa887-57f5-4f6c-b97a-c594335e955d.jpg"
+  },
+  {
+    "id": 8,
+    "confidence": 0.288,
+    "bbox_xyxy": [
+      502,
+      486,
+      590,
+      537
+    ],
+    "center": [
+      546,
+      511
+    ],
+    "area": 4488,
+    "aspect_ratio": 1.725,
+    "pose": "lying",
+    "pose_confidence": 0.529,
+    "risk_score": 1.0,
+    "priority": "HIGH",
+    "grid": [
+      6,
+      3
+    ],
+    "image_name": "cfefa887-57f5-4f6c-b97a-c594335e955d.jpg"
+  }
+]

@@ -1,0 +1,85 @@
+{
+  "dataset": "D:\\PROJECTS\\ResQ\\resq_backend\\data\\SARD\\search-and-rescue\\valid",
+  "image_count": 200,
+  "iou_threshold": 0.5,
+  "baseline": {
+    "images": 200,
+    "iou_threshold": 0.5,
+    "micro": {
+      "tp": 80,
+      "fp": 33,
+      "fn": 127,
+      "precision": 0.708,
+      "recall": 0.3865,
+      "f1": 0.5,
+      "map50": 0.1885
+    },
+    "classes": {
+      "person": {
+        "class_id": 0,
+        "gt": 207,
+        "tp": 80,
+        "fp": 22,
+        "fn": 127,
+        "precision": 0.7843,
+        "recall": 0.3865,
+        "f1": 0.5178,
+        "ap50": 0.3771
+      },
+      "wound": {
+        "class_id": 1,
+        "gt": 0,
+        "tp": 0,
+        "fp": 11,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "ap50": 0.0
+      }
+    }
+  },
+  "adaptive": {
+    "images": 200,
+    "iou_threshold": 0.5,
+    "micro": {
+      "tp": 81,
+      "fp": 33,
+      "fn": 126,
+      "precision": 0.7105,
+      "recall": 0.3913,
+      "f1": 0.5047,
+      "map50": 0.1905
+    },
+    "classes": {
+      "person": {
+        "class_id": 0,
+        "gt": 207,
+        "tp": 81,
+        "fp": 22,
+        "fn": 126,
+        "precision": 0.7864,
+        "recall": 0.3913,
+        "f1": 0.5226,
+        "ap50": 0.3809
+      },
+      "wound": {
+        "class_id": 1,
+        "gt": 0,
+        "tp": 0,
+        "fp": 11,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "ap50": 0.0
+      }
+    }
+  },
+  "delta_micro": {
+    "precision": 0.0025,
+    "recall": 0.0048,
+    "f1": 0.0047,
+    "map50": 0.002
+  }
+}

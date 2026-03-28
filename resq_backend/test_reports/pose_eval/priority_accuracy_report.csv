@@ -1,0 +1,8 @@
+class,precision,recall,f1,support,tp,fp,fn
+LOW,1.0,1.0,1.0,1,1,0,0
+MEDIUM,1.0,1.0,1.0,16,16,0,0
+HIGH,1.0,1.0,1.0,13,13,0,0
+
+macro avg,1.0,1.0,1.0,,,,
+weighted avg,1.0,1.0,1.0,,,,
+overall accuracy,1.0,,,,,,

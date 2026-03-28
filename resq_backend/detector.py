@@ -12,6 +12,7 @@ from typing import List, Dict
 import numpy as np
 import math
 from pathlib import Path
+import cv2
 from ultralytics import YOLO
 
 from pose_classifier import PoseClassifier
@@ -50,15 +51,64 @@ class Detector:
     # --------------------------------------------------
     # MAIN DETECTION  (with ByteTrack)
     # --------------------------------------------------
-    def detect(self, image: np.ndarray, conf: float = None) -> List[Dict]:
+    def _frame_quality_metrics(self, image: np.ndarray) -> tuple[float, float]:
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        blur_var = float(cv2.Laplacian(gray, cv2.CV_64F).var())
+        mean_light = float(gray.mean())
+        return blur_var, mean_light
+
+    def _enhance_blurry_frame(self, image: np.ndarray) -> np.ndarray:
+        """Apply lightweight deblur-friendly enhancement before inference."""
+        # 1) Unsharp mask to recover local edges on blurred people silhouettes.
+        blur = cv2.GaussianBlur(image, (0, 0), 1.2)
+        sharpened = cv2.addWeighted(image, 1.65, blur, -0.65, 0)
+
+        # 2) CLAHE on luminance channel to stabilize contrast after sharpening.
+        lab = cv2.cvtColor(sharpened, cv2.COLOR_BGR2LAB)
+        l, a, b = cv2.split(lab)
+        clahe = cv2.createCLAHE(clipLimit=2.2, tileGridSize=(8, 8))
+        l_eq = clahe.apply(l)
+        merged = cv2.merge([l_eq, a, b])
+        return cv2.cvtColor(merged, cv2.COLOR_LAB2BGR)
+
+    def _adaptive_confidence(self, image: np.ndarray) -> float:
+        """Lower confidence threshold for blurry/dim frames to recover missed detections."""
+        blur_var, mean_light = self._frame_quality_metrics(image)
+
+        conf = float(self.conf)
+
+        if blur_var < 40.0:
+            conf *= 0.55
+        elif blur_var < 80.0:
+            conf *= 0.70
+
+        if mean_light < 45.0:
+            conf *= 0.85
+
+        return max(0.05, min(conf, float(self.conf)))
+
+    def _adaptive_preprocess(self, image: np.ndarray) -> np.ndarray:
+        blur_var, _ = self._frame_quality_metrics(image)
+        if blur_var < 70.0:
+            return self._enhance_blurry_frame(image)
+        return image
+
+    def detect(self, image: np.ndarray, conf: float = None, adaptive: bool = False) -> List[Dict]:
         victims = []
-        effective_conf = self.conf if conf is None else conf
+        if conf is not None:
+            effective_conf = conf
+        elif adaptive:
+            effective_conf = self._adaptive_confidence(image)
+        else:
+            effective_conf = self.conf
+
+        inference_image = self._adaptive_preprocess(image) if adaptive else image
 
         # Run Pose Model for People (Class 0)
         # This guarantees we get high-quality person detection (including lying down)
         # and native keypoint extraction in a single pass.
         pose_results = self.pose_model.track(
-            image,
+            inference_image,
             conf=effective_conf,
             persist=True,
             tracker="bytetrack.yaml",
@@ -70,7 +120,7 @@ class Detector:
         # Run Detection Model for Wounds (Class 1)
         # This catches our custom wound annotations without interfering with person tracking.
         det_results = self.detector.track(
-            image,
+            inference_image,
             conf=effective_conf,
             persist=True,
             tracker="bytetrack.yaml",

@@ -1,0 +1,8 @@
+class,precision,recall,f1,support,tp,fp,fn
+standing,1.0,1.0,1.0,14,14,0,0
+sitting,1.0,1.0,1.0,2,2,0,0
+lying,1.0,1.0,1.0,14,14,0,0
+
+macro avg,1.0,1.0,1.0,,,,
+weighted avg,1.0,1.0,1.0,,,,
+overall accuracy,1.0,,,,,,
