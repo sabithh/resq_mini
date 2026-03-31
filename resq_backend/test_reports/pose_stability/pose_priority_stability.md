@@ -6,20 +6,15 @@ This is a robustness consistency test (not absolute GT accuracy).
 - IoU threshold: 0.5
 
 ## Augmentation Summary
-- gaussian_noise: match_rate=0.6056, pose_agreement=0.8372, priority_agreement=0.814
-- gaussian_blur: match_rate=0.8028, pose_agreement=0.8596, priority_agreement=0.8596
-- motion_blur: match_rate=0.7183, pose_agreement=0.8627, priority_agreement=0.8431
-- low_light: match_rate=0.7183, pose_agreement=0.9608, priority_agreement=0.902
+- low_light: match_rate=0.4026, pose_agreement=0.871, priority_agreement=0.871
+- motion_blur: match_rate=0.2857, pose_agreement=0.9091, priority_agreement=0.9091
+- gaussian_blur: match_rate=0.8961, pose_agreement=0.9275, priority_agreement=0.9275
+- gaussian_noise: match_rate=0.0779, pose_agreement=1.0, priority_agreement=1.0
 
 ## Top Pose Flips
-- lying -> standing: 16
-- standing -> sitting: 4
-- standing -> lying: 3
-- sitting -> standing: 1
+- standing -> lying: 7
+- lying -> standing: 4
 
 ## Top Priority Flips
-- HIGH -> LOW: 16
-- LOW -> HIGH: 6
-- LOW -> MEDIUM: 5
-- MEDIUM -> LOW: 1
-- HIGH -> MEDIUM: 1
+- MEDIUM -> HIGH: 7
+- HIGH -> MEDIUM: 4

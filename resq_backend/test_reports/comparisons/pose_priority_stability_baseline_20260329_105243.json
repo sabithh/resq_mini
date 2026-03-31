@@ -1,0 +1,104 @@
+{
+  "images_evaluated": 120,
+  "iou_threshold": 0.5,
+  "summary": [
+    {
+      "augmentation": "motion_blur",
+      "originals": 71,
+      "matched": 51,
+      "unmatched": 20,
+      "match_rate": 0.7183,
+      "pose_agreement": 0.902,
+      "pose_flip_rate": 0.098,
+      "priority_agreement": 0.7255,
+      "priority_flip_rate": 0.2745
+    },
+    {
+      "augmentation": "gaussian_blur",
+      "originals": 71,
+      "matched": 57,
+      "unmatched": 14,
+      "match_rate": 0.8028,
+      "pose_agreement": 0.9649,
+      "pose_flip_rate": 0.0351,
+      "priority_agreement": 0.7368,
+      "priority_flip_rate": 0.2632
+    },
+    {
+      "augmentation": "low_light",
+      "originals": 71,
+      "matched": 52,
+      "unmatched": 19,
+      "match_rate": 0.7324,
+      "pose_agreement": 0.9808,
+      "pose_flip_rate": 0.0192,
+      "priority_agreement": 0.9038,
+      "priority_flip_rate": 0.0962
+    },
+    {
+      "augmentation": "gaussian_noise",
+      "originals": 71,
+      "matched": 43,
+      "unmatched": 28,
+      "match_rate": 0.6056,
+      "pose_agreement": 1.0,
+      "pose_flip_rate": 0.0,
+      "priority_agreement": 0.907,
+      "priority_flip_rate": 0.093
+    }
+  ],
+  "pose_flip_pairs": [
+    {
+      "from": "standing",
+      "to": "lying",
+      "count": 3
+    },
+    {
+      "from": "standing",
+      "to": "sitting",
+      "count": 2
+    },
+    {
+      "from": "lying",
+      "to": "sitting",
+      "count": 1
+    },
+    {
+      "from": "sitting",
+      "to": "standing",
+      "count": 1
+    },
+    {
+      "from": "lying",
+      "to": "standing",
+      "count": 1
+    }
+  ],
+  "priority_flip_pairs": [
+    {
+      "from": "MEDIUM",
+      "to": "LOW",
+      "count": 18
+    },
+    {
+      "from": "LOW",
+      "to": "MEDIUM",
+      "count": 11
+    },
+    {
+      "from": "HIGH",
+      "to": "MEDIUM",
+      "count": 4
+    },
+    {
+      "from": "LOW",
+      "to": "HIGH",
+      "count": 3
+    },
+    {
+      "from": "MEDIUM",
+      "to": "HIGH",
+      "count": 2
+    }
+  ]
+}

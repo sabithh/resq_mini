@@ -28,20 +28,51 @@ def compute_risk(victim: dict, drone_id: str = "DEFAULT", frame_width: int = Non
 
     risk = 0.0
 
-    # Pose-based risk (MOST IMPORTANT)
-    if pose == "lying":
-        risk += 0.7  # Increased to ensure high priority
-    elif pose in ["sitting", "collapsed"]: # Adding collapsed just in case
-        risk += 0.4
-    elif pose == "WOUND":
-        risk += 0.9  # Wounds are critical!
-    elif pose == "unknown":
-        risk += 0.2
+    # Pose + bleed-aware risk (exact policy requested):
+    # - standing + no bleeding -> LOW
+    # - standing + bleeding -> MEDIUM
+    # - sitting -> MEDIUM
+    # - sitting + bleeding -> HIGH
+    # - lying (any) -> HIGH
+    # - WOUND explicit -> HIGH
+    raw_bleeding = bool(victim.get("bleeding", False))
+    bleeding_conf = float(victim.get("bleeding_confidence", 0.0) or 0.0)
 
-    # Penalize uncertain pose classification slightly.
-    # This helps elevate ambiguous cases into MEDIUM instead of LOW.
-    if pose != "WOUND":
-        risk += (1.0 - max(0.0, min(pose_confidence, 1.0))) * 0.12
+    # Pose-aware gating prevents weak color artifacts from escalating standing/sitting priority.
+    if pose == "WOUND":
+        bleeding = True
+    elif pose == "standing":
+        bleeding = raw_bleeding and bleeding_conf >= 0.68
+    elif pose == "sitting":
+        bleeding = raw_bleeding and bleeding_conf >= 0.58
+    elif pose == "lying":
+        bleeding = raw_bleeding and bleeding_conf >= 0.45
+    else:
+        bleeding = raw_bleeding and bleeding_conf >= 0.62
+
+    if pose == "lying":
+        risk = 0.9
+    elif pose == "sitting":
+        risk = 0.5 if not bleeding else 0.9
+    elif pose == "standing":
+        risk = 0.1 if not bleeding else 0.5
+    elif pose == "WOUND":
+        risk = 0.95
+    elif pose == "collapsed":
+        risk = 0.6
+    else:  # unknown/fallback
+        risk = 0.35
+
+    # If effective bleeding is present (even if pose == standing/sitting), prefer urgency
+    if bleeding:
+        if pose == "standing":
+            risk = max(risk, 0.5)
+        elif pose == "sitting":
+            risk = max(risk, 0.9)
+
+    # Penalize uncertain pose classification slightly (non-wound/unknown) for edge cases.
+    if not bleeding and pose not in ["WOUND", "lying"]:
+        risk += (1.0 - max(0.0, min(pose_confidence, 1.0))) * 0.1
 
     # Area-based (small = far / buried)
     # Prefer frame-relative area so behavior is consistent across resolutions.
@@ -72,12 +103,35 @@ def compute_risk(victim: dict, drone_id: str = "DEFAULT", frame_width: int = Non
         smoothed_risk = sum(history) / len(history)
         risk = smoothed_risk
 
-    if risk >= 0.62:
+    # PriorityOverride rules (hard policy mapping).
+    # Required behavior:
+    # standing->LOW, standing+bleeding->MEDIUM
+    # sitting->MEDIUM, sitting+bleeding->HIGH
+    # lying or WOUND->HIGH
+    if pose == "lying" or pose == "WOUND":
         priority = "HIGH"
-    elif risk >= 0.33:
+    elif pose == "sitting" and bleeding:
+        priority = "HIGH"
+    elif pose == "sitting":
         priority = "MEDIUM"
-    else:
+    elif pose == "standing" and bleeding:
+        priority = "MEDIUM"
+    elif pose == "standing":
         priority = "LOW"
+    elif pose == "collapsed":
+        priority = "HIGH"
+    else:
+        # fallback to computed risk thresholds for non-standard poses
+        if risk >= 0.62:
+            priority = "HIGH"
+        elif risk >= 0.33:
+            priority = "MEDIUM"
+        else:
+            priority = "LOW"
+
+    # Keep strict standing LOW mapping; only escalate unknown/other weak cases.
+    if pose not in ["standing", "sitting", "lying", "WOUND"] and priority == "LOW" and (pose_confidence < 0.5 or confidence < 0.4):
+        priority = "MEDIUM"
 
     victim["risk_score"] = round(risk, 3)
     victim["priority"] = priority

@@ -144,7 +144,7 @@ def run_detection(images: List[Path], detector: Detector) -> List[dict]:
             print(f"[WARN] Cannot read {img_path.name}")
             continue
         h, w = image.shape[:2]
-        victims = detector.detect(image)
+        victims = detector.detect(image, adaptive=True)
         for v in victims:
             v = compute_risk(v, drone_id="EVAL", frame_width=w, frame_height=h)
             v = assign_grid(v, w, h)
@@ -361,6 +361,8 @@ def main() -> int:
                         help="Path to ground_truth.json (default: test_reports/pose_eval/ground_truth.json)")
     parser.add_argument("--fail-on-leak", action="store_true",
                         help="Exit with error if GT appears copied from predictions")
+    parser.add_argument("--strict-gt", action="store_true",
+                        help="Fail when GT labels are missing/invalid instead of auto-defaulting")
     args = parser.parse_args()
 
     REPORT_DIR.mkdir(parents=True, exist_ok=True)
@@ -413,6 +415,17 @@ def main() -> int:
         gt_entries = json.load(f)
     print(f"[GT] Loaded {len(gt_entries)} ground truth entries from {gt_path}")
 
+    # Keep evaluation aligned to current test folder content.
+    valid_image_names = {p.name for p in images}
+    filtered_gt = [e for e in gt_entries if e.get("image_name", "") in valid_image_names]
+    dropped_gt = len(gt_entries) - len(filtered_gt)
+    if dropped_gt > 0:
+        print(f"[GT] Ignoring {dropped_gt} stale GT entries not present in current test folder")
+    gt_entries = filtered_gt
+    if not gt_entries:
+        print("[ERROR] No valid GT entries remain after filtering to current test images")
+        return 1
+
     # Detect label leakage when GT is still identical to scaffolded predictions.
     comparable = [
         e for e in gt_entries
@@ -452,6 +465,31 @@ def main() -> int:
         pred_victims = run_detection(images, detector)
         with pred_path.open("w", encoding="utf-8") as f:
             json.dump(pred_victims, f, indent=2, default=str)
+
+    # Validate GT labels in strict mode.
+    if args.strict_gt:
+        invalid = []
+        for idx, e in enumerate(gt_entries, start=1):
+            gt_pose = str(e.get("gt_pose", "")).lower().strip()
+            gt_pri = str(e.get("gt_priority", "")).upper().strip()
+            if gt_pose not in POSE_CLASSES or gt_pri not in PRIORITY_CLASSES:
+                invalid.append({
+                    "index": idx,
+                    "image_name": e.get("image_name", ""),
+                    "victim_id": e.get("victim_id", e.get("entry_id", "")),
+                    "gt_pose": e.get("gt_pose", ""),
+                    "gt_priority": e.get("gt_priority", ""),
+                })
+        if invalid:
+            print(f"[ERROR] Strict GT validation failed: {len(invalid)} invalid entries.")
+            for row in invalid[:10]:
+                print(
+                    f"  - idx={row['index']} image={row['image_name']} victim={row['victim_id']} "
+                    f"gt_pose={row['gt_pose']} gt_priority={row['gt_priority']}"
+                )
+            if len(invalid) > 10:
+                print(f"  ... and {len(invalid) - 10} more")
+            return 3
 
     # Match GT → predictions
     matches = match_preds_to_gt(gt_entries, pred_victims, iou_thr=args.iou)

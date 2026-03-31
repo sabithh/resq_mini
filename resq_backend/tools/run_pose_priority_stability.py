@@ -231,9 +231,14 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Pose/priority stability evaluation")
     parser.add_argument("--max-images", type=int, default=120, help="Max images from validation set")
     parser.add_argument("--iou", type=float, default=0.5, help="IoU threshold for matching")
+    parser.add_argument("--seed", type=int, default=123, help="Random seed for deterministic augmentations")
+    parser.add_argument("--report-dir", type=str, default=str(REPORT_DIR), help="Directory to write outputs")
     args = parser.parse_args()
 
-    REPORT_DIR.mkdir(parents=True, exist_ok=True)
+    np.random.seed(args.seed)
+
+    report_dir = Path(args.report_dir)
+    report_dir.mkdir(parents=True, exist_ok=True)
     images = sorted(DATASET_IMAGES.glob("*.jpg")) + sorted(DATASET_IMAGES.glob("*.jpeg")) + sorted(DATASET_IMAGES.glob("*.png"))
     if not images:
         print(f"[ERROR] No images found in {DATASET_IMAGES}")
@@ -245,9 +250,9 @@ def main() -> int:
     detector = Detector()
     report = evaluate(images, detector=detector, iou_thr=args.iou)
 
-    out_json = REPORT_DIR / "pose_priority_stability.json"
-    out_csv = REPORT_DIR / "pose_priority_stability.csv"
-    out_md = REPORT_DIR / "pose_priority_stability.md"
+    out_json = report_dir / "pose_priority_stability.json"
+    out_csv = report_dir / "pose_priority_stability.csv"
+    out_md = report_dir / "pose_priority_stability.md"
 
     out_json.write_text(json.dumps(report, indent=2), encoding="utf-8")
 

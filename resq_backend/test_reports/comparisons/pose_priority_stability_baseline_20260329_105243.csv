@@ -1,0 +1,5 @@
+augmentation,originals,matched,unmatched,match_rate,pose_agreement,pose_flip_rate,priority_agreement,priority_flip_rate
+motion_blur,71,51,20,0.7183,0.902,0.098,0.7255,0.2745
+gaussian_blur,71,57,14,0.8028,0.9649,0.0351,0.7368,0.2632
+low_light,71,52,19,0.7324,0.9808,0.0192,0.9038,0.0962
+gaussian_noise,71,43,28,0.6056,1.0,0.0,0.907,0.093

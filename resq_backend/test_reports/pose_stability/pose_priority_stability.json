@@ -3,97 +3,72 @@
   "iou_threshold": 0.5,
   "summary": [
     {
-      "augmentation": "gaussian_noise",
-      "originals": 71,
-      "matched": 43,
-      "unmatched": 28,
-      "match_rate": 0.6056,
-      "pose_agreement": 0.8372,
-      "pose_flip_rate": 0.1628,
-      "priority_agreement": 0.814,
-      "priority_flip_rate": 0.186
-    },
-    {
-      "augmentation": "gaussian_blur",
-      "originals": 71,
-      "matched": 57,
-      "unmatched": 14,
-      "match_rate": 0.8028,
-      "pose_agreement": 0.8596,
-      "pose_flip_rate": 0.1404,
-      "priority_agreement": 0.8596,
-      "priority_flip_rate": 0.1404
+      "augmentation": "low_light",
+      "originals": 77,
+      "matched": 31,
+      "unmatched": 46,
+      "match_rate": 0.4026,
+      "pose_agreement": 0.871,
+      "pose_flip_rate": 0.129,
+      "priority_agreement": 0.871,
+      "priority_flip_rate": 0.129
     },
     {
       "augmentation": "motion_blur",
-      "originals": 71,
-      "matched": 51,
-      "unmatched": 20,
-      "match_rate": 0.7183,
-      "pose_agreement": 0.8627,
-      "pose_flip_rate": 0.1373,
-      "priority_agreement": 0.8431,
-      "priority_flip_rate": 0.1569
+      "originals": 77,
+      "matched": 22,
+      "unmatched": 55,
+      "match_rate": 0.2857,
+      "pose_agreement": 0.9091,
+      "pose_flip_rate": 0.0909,
+      "priority_agreement": 0.9091,
+      "priority_flip_rate": 0.0909
     },
     {
-      "augmentation": "low_light",
-      "originals": 71,
-      "matched": 51,
-      "unmatched": 20,
-      "match_rate": 0.7183,
-      "pose_agreement": 0.9608,
-      "pose_flip_rate": 0.0392,
-      "priority_agreement": 0.902,
-      "priority_flip_rate": 0.098
+      "augmentation": "gaussian_blur",
+      "originals": 77,
+      "matched": 69,
+      "unmatched": 8,
+      "match_rate": 0.8961,
+      "pose_agreement": 0.9275,
+      "pose_flip_rate": 0.0725,
+      "priority_agreement": 0.9275,
+      "priority_flip_rate": 0.0725
+    },
+    {
+      "augmentation": "gaussian_noise",
+      "originals": 77,
+      "matched": 6,
+      "unmatched": 71,
+      "match_rate": 0.0779,
+      "pose_agreement": 1.0,
+      "pose_flip_rate": 0.0,
+      "priority_agreement": 1.0,
+      "priority_flip_rate": 0.0
     }
   ],
   "pose_flip_pairs": [
     {
-      "from": "lying",
-      "to": "standing",
-      "count": 16
-    },
-    {
-      "from": "standing",
-      "to": "sitting",
-      "count": 4
-    },
-    {
       "from": "standing",
       "to": "lying",
-      "count": 3
+      "count": 7
     },
     {
-      "from": "sitting",
+      "from": "lying",
       "to": "standing",
-      "count": 1
+      "count": 4
     }
   ],
   "priority_flip_pairs": [
     {
-      "from": "HIGH",
-      "to": "LOW",
-      "count": 16
-    },
-    {
-      "from": "LOW",
-      "to": "HIGH",
-      "count": 6
-    },
-    {
-      "from": "LOW",
-      "to": "MEDIUM",
-      "count": 5
-    },
-    {
       "from": "MEDIUM",
-      "to": "LOW",
-      "count": 1
+      "to": "HIGH",
+      "count": 7
     },
     {
       "from": "HIGH",
       "to": "MEDIUM",
-      "count": 1
+      "count": 4
     }
   ]
 }

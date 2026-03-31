@@ -1,181 +1,5 @@
 [
   {
-    "image_name": "3b627ab7-01ee-4a84-b20a-3487bd9374e8.jpg",
-    "victim_id": 1,
-    "bbox_xyxy": [
-      0,
-      835,
-      63,
-      969
-    ],
-    "gt_pose": "standing",
-    "gt_priority": "LOW",
-    "_pred_pose": "standing",
-    "_pred_priority": "LOW",
-    "_pose_confidence": 0.523,
-    "_risk_score": 0.228
-  },
-  {
-    "image_name": "3b627ab7-01ee-4a84-b20a-3487bd9374e8.jpg",
-    "victim_id": 2,
-    "bbox_xyxy": [
-      370,
-      584,
-      410,
-      669
-    ],
-    "gt_pose": "lying",
-    "gt_priority": "HIGH",
-    "_pred_pose": "lying",
-    "_pred_priority": "HIGH",
-    "_pose_confidence": 0.515,
-    "_risk_score": 1.0
-  },
-  {
-    "image_name": "3b627ab7-01ee-4a84-b20a-3487bd9374e8.jpg",
-    "victim_id": 3,
-    "bbox_xyxy": [
-      281,
-      584,
-      374,
-      624
-    ],
-    "gt_pose": "lying",
-    "gt_priority": "HIGH",
-    "_pred_pose": "lying",
-    "_pred_priority": "HIGH",
-    "_pose_confidence": 0.611,
-    "_risk_score": 1.0
-  },
-  {
-    "image_name": "4c998fd2-3187-4a7c-8c0b-4cffb262f422.jpg",
-    "victim_id": 0,
-    "bbox_xyxy": [
-      491,
-      798,
-      544,
-      913
-    ],
-    "gt_pose": "lying",
-    "gt_priority": "HIGH",
-    "_pred_pose": "lying",
-    "_pred_priority": "HIGH",
-    "_pose_confidence": 0.562,
-    "_risk_score": 0.914
-  },
-  {
-    "image_name": "4c998fd2-3187-4a7c-8c0b-4cffb262f422.jpg",
-    "victim_id": 1,
-    "bbox_xyxy": [
-      270,
-      787,
-      312,
-      888
-    ],
-    "gt_pose": "lying",
-    "gt_priority": "MEDIUM",
-    "_pred_pose": "lying",
-    "_pred_priority": "MEDIUM",
-    "_pose_confidence": 0.47,
-    "_risk_score": 0.614
-  },
-  {
-    "image_name": "4c998fd2-3187-4a7c-8c0b-4cffb262f422.jpg",
-    "victim_id": 2,
-    "bbox_xyxy": [
-      216,
-      558,
-      267,
-      656
-    ],
-    "gt_pose": "standing",
-    "gt_priority": "MEDIUM",
-    "_pred_pose": "standing",
-    "_pred_priority": "MEDIUM",
-    "_pose_confidence": 0.495,
-    "_risk_score": 0.613
-  },
-  {
-    "image_name": "4c998fd2-3187-4a7c-8c0b-4cffb262f422.jpg",
-    "victim_id": 3,
-    "bbox_xyxy": [
-      183,
-      524,
-      213,
-      625
-    ],
-    "gt_pose": "standing",
-    "gt_priority": "HIGH",
-    "_pred_pose": "standing",
-    "_pred_priority": "HIGH",
-    "_pose_confidence": 0.6,
-    "_risk_score": 0.685
-  },
-  {
-    "image_name": "4c998fd2-3187-4a7c-8c0b-4cffb262f422.jpg",
-    "victim_id": 4,
-    "bbox_xyxy": [
-      21,
-      587,
-      53,
-      672
-    ],
-    "gt_pose": "standing",
-    "gt_priority": "MEDIUM",
-    "_pred_pose": "standing",
-    "_pred_priority": "MEDIUM",
-    "_pose_confidence": 0.56,
-    "_risk_score": 0.384
-  },
-  {
-    "image_name": "4c998fd2-3187-4a7c-8c0b-4cffb262f422.jpg",
-    "victim_id": 5,
-    "bbox_xyxy": [
-      261,
-      544,
-      285,
-      630
-    ],
-    "gt_pose": "standing",
-    "gt_priority": "MEDIUM",
-    "_pred_pose": "standing",
-    "_pred_priority": "MEDIUM",
-    "_pose_confidence": 0.735,
-    "_risk_score": 0.39
-  },
-  {
-    "image_name": "4c998fd2-3187-4a7c-8c0b-4cffb262f422.jpg",
-    "victim_id": 6,
-    "bbox_xyxy": [
-      513,
-      330,
-      543,
-      397
-    ],
-    "gt_pose": "standing",
-    "gt_priority": "MEDIUM",
-    "_pred_pose": "standing",
-    "_pred_priority": "MEDIUM",
-    "_pose_confidence": 0.608,
-    "_risk_score": 0.448
-  },
-  {
-    "image_name": "4c998fd2-3187-4a7c-8c0b-4cffb262f422.jpg",
-    "victim_id": 7,
-    "bbox_xyxy": [
-      534,
-      323,
-      557,
-      398
-    ],
-    "gt_pose": "standing",
-    "gt_priority": "MEDIUM",
-    "_pred_pose": "standing",
-    "_pred_priority": "MEDIUM",
-    "_pose_confidence": 0.786,
-    "_risk_score": 0.442
-  },
-  {
     "image_name": "606dd9ab-d68d-45ee-a5dc-3adb97296744.jpg",
     "victim_id": 0,
     "bbox_xyxy": [
@@ -185,7 +9,7 @@
       678
     ],
     "gt_pose": "sitting",
-    "gt_priority": "HIGH",
+    "gt_priority": "MEDIUM",
     "_pred_pose": "sitting",
     "_pred_priority": "HIGH",
     "_pose_confidence": 0.691,
@@ -201,7 +25,7 @@
       461
     ],
     "gt_pose": "standing",
-    "gt_priority": "MEDIUM",
+    "gt_priority": "LOW",
     "_pred_pose": "standing",
     "_pred_priority": "MEDIUM",
     "_pose_confidence": 0.394,
@@ -216,8 +40,8 @@
       666,
       446
     ],
-    "gt_pose": "lying",
-    "gt_priority": "HIGH",
+    "gt_pose": "standing",
+    "gt_priority": "LOW",
     "_pred_pose": "lying",
     "_pred_priority": "HIGH",
     "_pose_confidence": 0.4,
@@ -233,7 +57,7 @@
       461
     ],
     "gt_pose": "standing",
-    "gt_priority": "MEDIUM",
+    "gt_priority": "LOW",
     "_pred_pose": "standing",
     "_pred_priority": "MEDIUM",
     "_pose_confidence": 0.407,
@@ -248,8 +72,8 @@
       1189,
       468
     ],
-    "gt_pose": "sitting",
-    "gt_priority": "MEDIUM",
+    "gt_pose": "lying",
+    "gt_priority": "HIGH",
     "_pred_pose": "sitting",
     "_pred_priority": "MEDIUM",
     "_pose_confidence": 0.57,
@@ -265,7 +89,7 @@
       650
     ],
     "gt_pose": "lying",
-    "gt_priority": "MEDIUM",
+    "gt_priority": "HIGH",
     "_pred_pose": "lying",
     "_pred_priority": "MEDIUM",
     "_pose_confidence": 0.447,
@@ -281,59 +105,11 @@
       376
     ],
     "gt_pose": "standing",
-    "gt_priority": "MEDIUM",
+    "gt_priority": "LOW",
     "_pred_pose": "standing",
     "_pred_priority": "MEDIUM",
     "_pose_confidence": 0.464,
     "_risk_score": 0.356
-  },
-  {
-    "image_name": "ad56ca21-c0cc-44a2-a18d-a58922e21058.jpg",
-    "victim_id": 0,
-    "bbox_xyxy": [
-      105,
-      510,
-      406,
-      653
-    ],
-    "gt_pose": "lying",
-    "gt_priority": "HIGH",
-    "_pred_pose": "lying",
-    "_pred_priority": "HIGH",
-    "_pose_confidence": 0.442,
-    "_risk_score": 0.662
-  },
-  {
-    "image_name": "ad56ca21-c0cc-44a2-a18d-a58922e21058.jpg",
-    "victim_id": 1,
-    "bbox_xyxy": [
-      278,
-      549,
-      449,
-      778
-    ],
-    "gt_pose": "lying",
-    "gt_priority": "HIGH",
-    "_pred_pose": "lying",
-    "_pred_priority": "HIGH",
-    "_pose_confidence": 0.558,
-    "_risk_score": 0.705
-  },
-  {
-    "image_name": "ad56ca21-c0cc-44a2-a18d-a58922e21058.jpg",
-    "victim_id": 2,
-    "bbox_xyxy": [
-      112,
-      525,
-      433,
-      681
-    ],
-    "gt_pose": "lying",
-    "gt_priority": "MEDIUM",
-    "_pred_pose": "lying",
-    "_pred_priority": "MEDIUM",
-    "_pose_confidence": 0.674,
-    "_risk_score": 0.545
   },
   {
     "image_name": "cfefa887-57f5-4f6c-b97a-c594335e955d.jpg",
@@ -344,8 +120,8 @@
       1150,
       587
     ],
-    "gt_pose": "lying",
-    "gt_priority": "HIGH",
+    "gt_pose": "sitting",
+    "gt_priority": "MEDIUM",
     "_pred_pose": "lying",
     "_pred_priority": "HIGH",
     "_pose_confidence": 0.547,
@@ -360,8 +136,8 @@
       1100,
       562
     ],
-    "gt_pose": "lying",
-    "gt_priority": "HIGH",
+    "gt_pose": "sitting",
+    "gt_priority": "MEDIUM",
     "_pred_pose": "lying",
     "_pred_priority": "HIGH",
     "_pose_confidence": 0.439,
@@ -377,7 +153,7 @@
       404
     ],
     "gt_pose": "standing",
-    "gt_priority": "MEDIUM",
+    "gt_priority": "LOW",
     "_pred_pose": "standing",
     "_pred_priority": "MEDIUM",
     "_pose_confidence": 0.437,
@@ -393,7 +169,7 @@
       421
     ],
     "gt_pose": "standing",
-    "gt_priority": "MEDIUM",
+    "gt_priority": "LOW",
     "_pred_pose": "standing",
     "_pred_priority": "MEDIUM",
     "_pose_confidence": 0.591,
@@ -408,7 +184,7 @@
       860,
       598
     ],
-    "gt_pose": "standing",
+    "gt_pose": "sitting",
     "gt_priority": "MEDIUM",
     "_pred_pose": "standing",
     "_pred_priority": "MEDIUM",
@@ -424,7 +200,7 @@
       898,
       601
     ],
-    "gt_pose": "standing",
+    "gt_pose": "sitting",
     "gt_priority": "MEDIUM",
     "_pred_pose": "standing",
     "_pred_priority": "MEDIUM",
@@ -456,8 +232,8 @@
       663,
       446
     ],
-    "gt_pose": "lying",
-    "gt_priority": "HIGH",
+    "gt_pose": "standing",
+    "gt_priority": "LOW",
     "_pred_pose": "lying",
     "_pred_priority": "HIGH",
     "_pose_confidence": 0.472,
