@@ -35,7 +35,9 @@ from typing import Dict
 
 from config import (
     BOT_TOKEN, CHAT_ID, BACKEND_HOST, BACKEND_PORT,
-    FRAME_SKIP, CROP_PADDING, ALERT_COOLDOWN_MINUTES
+    FRAME_SKIP, CROP_PADDING, ALERT_COOLDOWN_MINUTES,
+    VIDEO_INFER_IMGSZ, VIDEO_ENABLE_WOUND_DETECTION, VIDEO_WRITE_INTERVAL_SEC,
+    STREAM_FPS, STREAM_JPEG_QUALITY,
 )
 from detector import Detector
 from risk import compute_risk
@@ -432,9 +434,14 @@ def video_worker(drone_id: str = "DRONE_1"):
     global streaming_active, latest_stream_frame
 
     cap   = cv2.VideoCapture(current_video_path)
+    # Some backends ignore this, but on supported builds it reduces stale-frame lag.
+    cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
     fps   = cap.get(cv2.CAP_PROP_FPS)
     delay = 1 / fps if fps > 0 else 0.03
     frame_count = 0
+    effective_skip = max(1, int(FRAME_SKIP))
+    write_interval = max(0.2, float(VIDEO_WRITE_INTERVAL_SEC))
+    last_disk_write = 0.0
 
     while streaming_active and cap.isOpened():
         ret, frame = cap.read()
@@ -442,28 +449,42 @@ def video_worker(drone_id: str = "DRONE_1"):
             break
 
         frame_count += 1
+        stream_frame = frame
 
         # Frame skip — only run inference every FRAME_SKIP frames
-        if frame_count % FRAME_SKIP == 0:
+        if frame_count % effective_skip == 0:
             h, w = frame.shape[:2]
             detector = get_detector(drone_id)
             victims = [
                 assign_grid(compute_risk(d, drone_id=drone_id, frame_width=w, frame_height=h), w, h)
-                for d in detector.detect(frame, adaptive=True)
+                for d in detector.detect(
+                    frame,
+                    adaptive=True,
+                    imgsz=VIDEO_INFER_IMGSZ,
+                    detect_wounds=VIDEO_ENABLE_WOUND_DETECTION,
+                )
             ]
             drone_victims[drone_id] = victims
             annotated = draw_annotations(frame, victims)
-            cv2.imwrite(str(STATIC_DIR / f"latest_annotated_{drone_id}.jpg"), annotated)
-            cv2.imwrite(str(STATIC_DIR / "latest_annotated.jpg"), annotated)
+            stream_frame = annotated
+
+            now_ts = time.time()
+            if now_ts - last_disk_write >= write_interval:
+                cv2.imwrite(str(STATIC_DIR / f"latest_annotated_{drone_id}.jpg"), annotated)
+                cv2.imwrite(str(STATIC_DIR / "latest_annotated.jpg"), annotated)
+                last_disk_write = now_ts
+
             handle_alerts(frame, victims, drone_id=drone_id, mode="video")
             # Push WebSocket update from thread using the captured event loop
             if _loop and not _loop.is_closed():
                 asyncio.run_coroutine_threadsafe(_push_update(), _loop)
 
         with frame_lock:
-            latest_stream_frame = frame.copy()
+            latest_stream_frame = stream_frame.copy()
 
-        time.sleep(delay)
+        # Don't add extra wait after inference-heavy iterations.
+        if frame_count % effective_skip != 0:
+            time.sleep(delay)
 
     cap.release()
     streaming_active = False
@@ -560,15 +581,25 @@ def dashboard_thermal():
 
 @app.get("/video-stream")
 def video_stream():
+    stream_interval = 1.0 / max(1.0, float(STREAM_FPS))
+    jpeg_quality = int(min(95, max(40, int(STREAM_JPEG_QUALITY))))
+
     def generate():
+        encode_params = [int(cv2.IMWRITE_JPEG_QUALITY), jpeg_quality]
         while True:
             with frame_lock:
                 if latest_stream_frame is None:
-                    time.sleep(0.03)
+                    time.sleep(stream_interval)
                     continue
-                _, jpg = cv2.imencode(".jpg", latest_stream_frame)
+                frame = latest_stream_frame.copy()
+
+            ok, jpg = cv2.imencode(".jpg", frame, encode_params)
+            if not ok:
+                time.sleep(stream_interval)
+                continue
+
             yield b"--frame\r\nContent-Type: image/jpeg\r\n\r\n" + jpg.tobytes() + b"\r\n"
-            time.sleep(0.03)
+            time.sleep(stream_interval)
 
     return StreamingResponse(
         generate(),

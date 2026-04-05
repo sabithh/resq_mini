@@ -249,7 +249,14 @@ class Detector:
 
         return False, min(1.0, red_ratio * 2.0)
 
-    def detect(self, image: np.ndarray, conf: float = None, adaptive: bool = False) -> List[Dict]:
+    def detect(
+        self,
+        image: np.ndarray,
+        conf: float = None,
+        adaptive: bool = False,
+        imgsz: int = 1280,
+        detect_wounds: bool = True,
+    ) -> List[Dict]:
         people = []
         wounds = []
         if conf is not None:
@@ -258,6 +265,12 @@ class Detector:
             effective_conf = self._adaptive_confidence(image)
         else:
             effective_conf = self.conf
+
+        try:
+            infer_imgsz = int(imgsz)
+        except (TypeError, ValueError):
+            infer_imgsz = 1280
+        infer_imgsz = max(320, min(infer_imgsz, 1920))
 
         inference_image = self._adaptive_preprocess(image) if adaptive else image
         # Run wounds at a lower threshold to recover subtle bleeding cues.
@@ -272,21 +285,23 @@ class Detector:
             persist=True,
             tracker="bytetrack.yaml",
             verbose=False,
-            imgsz=1280,
+            imgsz=infer_imgsz,
             classes=[0]  # Only people
         )
 
         # Run Detection Model for wounds only.
         # Wounds are then associated with people as bleeding evidence.
-        det_results = self.detector.track(
-            inference_image,
-            conf=det_conf,
-            persist=True,
-            tracker="bytetrack.yaml",
-            verbose=False,
-            imgsz=1280,
-            classes=[1]
-        )
+        det_results = None
+        if detect_wounds:
+            det_results = self.detector.track(
+                inference_image,
+                conf=det_conf,
+                persist=True,
+                tracker="bytetrack.yaml",
+                verbose=False,
+                imgsz=infer_imgsz,
+                classes=[1]
+            )
 
         h_img, w_img = image.shape[:2]
 
@@ -351,7 +366,7 @@ class Detector:
                 })
 
         # 2. Process wounds
-        if det_results and det_results[0].boxes is not None:
+        if detect_wounds and det_results and det_results[0].boxes is not None:
             boxes = det_results[0].boxes.xyxy.cpu().numpy()
             confs = det_results[0].boxes.conf.cpu().numpy()
             ids_raw = det_results[0].boxes.id
