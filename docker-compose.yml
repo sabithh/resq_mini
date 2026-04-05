@@ -1,0 +1,28 @@
+version: "3.9"
+
+services:
+  resq-backend:
+    build:
+      context: ./resq_backend
+      dockerfile: Dockerfile
+    container_name: resq_backend
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./resq_backend/.env
+    environment:
+      - DB_PATH=/app/db/resq.db
+    volumes:
+      # Persist uploaded images/videos and SQLite DB
+      - ./resq_backend/static:/app/static
+      - ./resq_backend/videos:/app/videos
+      - resq_db:/app/db          # named volume for SQLite — avoids dir-vs-file issue
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  resq_db:

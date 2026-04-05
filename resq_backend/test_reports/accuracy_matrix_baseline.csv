@@ -1,0 +1,10 @@
+mode,augmentation,images,base_total,pred_total,tp,fp,fn,precision,recall,f1,mean_confidence,count_ratio_pred_to_base
+baseline,gaussian_blur,6,27,15,15,0,12,1.0000,0.5556,0.7143,0.5593,0.5556
+baseline,gaussian_noise,6,26,23,22,1,4,0.9565,0.8462,0.8980,0.6839,0.8846
+baseline,high_contrast,6,28,26,26,0,2,1.0000,0.9286,0.9630,0.6423,0.9286
+baseline,high_light,6,28,26,26,0,2,1.0000,0.9286,0.9630,0.6735,0.9286
+baseline,low_contrast,6,28,28,28,0,0,1.0000,1.0000,1.0000,0.6031,1.0000
+baseline,low_light,6,27,28,27,1,0,0.9643,1.0000,0.9818,0.5993,1.0370
+baseline,motion_blur,6,27,16,16,0,11,1.0000,0.5926,0.7442,0.5669,0.5926
+baseline,original,6,30,26,26,0,4,1.0000,0.8667,0.9286,0.6526,0.8667
+baseline,salt_pepper,6,25,26,24,2,1,0.9231,0.9600,0.9412,0.7518,1.0400

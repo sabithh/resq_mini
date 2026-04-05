@@ -1,0 +1,319 @@
+{
+  "test_images": 7,
+  "gt_entries": 16,
+  "matched": 16,
+  "undetected_fn": 0,
+  "iou_threshold": 0.5,
+  "pose": {
+    "overall_accuracy": 0.75,
+    "macro_avg": {
+      "precision": 0.7889,
+      "recall": 0.7167,
+      "f1": 0.7269
+    },
+    "weighted_avg": {
+      "precision": 0.7646,
+      "recall": 0.75,
+      "f1": 0.7308
+    },
+    "per_class": {
+      "standing": {
+        "tp": 7,
+        "fp": 3,
+        "fn": 0,
+        "precision": 0.7,
+        "recall": 1.0,
+        "f1": 0.8235,
+        "support": 7
+      },
+      "sitting": {
+        "tp": 2,
+        "fp": 1,
+        "fn": 3,
+        "precision": 0.6667,
+        "recall": 0.4,
+        "f1": 0.5,
+        "support": 5
+      },
+      "lying": {
+        "tp": 3,
+        "fp": 0,
+        "fn": 1,
+        "precision": 1.0,
+        "recall": 0.75,
+        "f1": 0.8571,
+        "support": 4
+      }
+    },
+    "confusion_matrix": {
+      "standing": {
+        "standing": 7,
+        "sitting": 0,
+        "lying": 0
+      },
+      "sitting": {
+        "standing": 3,
+        "sitting": 2,
+        "lying": 0
+      },
+      "lying": {
+        "standing": 0,
+        "sitting": 1,
+        "lying": 3
+      }
+    }
+  },
+  "priority": {
+    "overall_accuracy": 0.75,
+    "macro_avg": {
+      "precision": 0.7889,
+      "recall": 0.7167,
+      "f1": 0.7269
+    },
+    "weighted_avg": {
+      "precision": 0.7646,
+      "recall": 0.75,
+      "f1": 0.7308
+    },
+    "per_class": {
+      "LOW": {
+        "tp": 7,
+        "fp": 3,
+        "fn": 0,
+        "precision": 0.7,
+        "recall": 1.0,
+        "f1": 0.8235,
+        "support": 7
+      },
+      "MEDIUM": {
+        "tp": 2,
+        "fp": 1,
+        "fn": 3,
+        "precision": 0.6667,
+        "recall": 0.4,
+        "f1": 0.5,
+        "support": 5
+      },
+      "HIGH": {
+        "tp": 3,
+        "fp": 0,
+        "fn": 1,
+        "precision": 1.0,
+        "recall": 0.75,
+        "f1": 0.8571,
+        "support": 4
+      }
+    },
+    "confusion_matrix": {
+      "LOW": {
+        "LOW": 7,
+        "MEDIUM": 0,
+        "HIGH": 0
+      },
+      "MEDIUM": {
+        "LOW": 3,
+        "MEDIUM": 2,
+        "HIGH": 0
+      },
+      "HIGH": {
+        "LOW": 0,
+        "MEDIUM": 1,
+        "HIGH": 3
+      }
+    }
+  },
+  "per_victim_matches": [
+    {
+      "image": "606dd9ab-d68d-45ee-a5dc-3adb97296744.jpg",
+      "victim_id": 0,
+      "gt_pose": "sitting",
+      "pred_pose": "sitting",
+      "gt_priority": "MEDIUM",
+      "pred_priority": "MEDIUM",
+      "iou": 1.0,
+      "pose_confidence": 0.25,
+      "risk_score": 0.98,
+      "matched": true
+    },
+    {
+      "image": "844c75ae-a70e-4696-9fd5-9bb1b03b8b49.jpg",
+      "victim_id": 0,
+      "gt_pose": "standing",
+      "pred_pose": "standing",
+      "gt_priority": "LOW",
+      "pred_priority": "LOW",
+      "iou": 1.0,
+      "pose_confidence": 0.25,
+      "risk_score": 0.189,
+      "matched": true
+    },
+    {
+      "image": "844c75ae-a70e-4696-9fd5-9bb1b03b8b49.jpg",
+      "victim_id": 1,
+      "gt_pose": "standing",
+      "pred_pose": "standing",
+      "gt_priority": "LOW",
+      "pred_priority": "LOW",
+      "iou": 1.0,
+      "pose_confidence": 0.25,
+      "risk_score": 0.585,
+      "matched": true
+    },
+    {
+      "image": "844c75ae-a70e-4696-9fd5-9bb1b03b8b49.jpg",
+      "victim_id": 2,
+      "gt_pose": "standing",
+      "pred_pose": "standing",
+      "gt_priority": "LOW",
+      "pred_priority": "LOW",
+      "iou": 1.0,
+      "pose_confidence": 0.25,
+      "risk_score": 0.19,
+      "matched": true
+    },
+    {
+      "image": "844c75ae-a70e-4696-9fd5-9bb1b03b8b49.jpg",
+      "victim_id": 3,
+      "gt_pose": "lying",
+      "pred_pose": "lying",
+      "gt_priority": "HIGH",
+      "pred_priority": "HIGH",
+      "iou": 1.0,
+      "pose_confidence": 0.25,
+      "risk_score": 0.92,
+      "matched": true
+    },
+    {
+      "image": "844c75ae-a70e-4696-9fd5-9bb1b03b8b49.jpg",
+      "victim_id": 4,
+      "gt_pose": "lying",
+      "pred_pose": "lying",
+      "gt_priority": "HIGH",
+      "pred_priority": "HIGH",
+      "iou": 1.0,
+      "pose_confidence": 0.25,
+      "risk_score": 0.957,
+      "matched": true
+    },
+    {
+      "image": "844c75ae-a70e-4696-9fd5-9bb1b03b8b49.jpg",
+      "victim_id": 5,
+      "gt_pose": "standing",
+      "pred_pose": "standing",
+      "gt_priority": "LOW",
+      "pred_priority": "LOW",
+      "iou": 1.0,
+      "pose_confidence": 0.25,
+      "risk_score": 0.433,
+      "matched": true
+    },
+    {
+      "image": "cfefa887-57f5-4f6c-b97a-c594335e955d.jpg",
+      "victim_id": 0,
+      "gt_pose": "sitting",
+      "pred_pose": "standing",
+      "gt_priority": "MEDIUM",
+      "pred_priority": "LOW",
+      "iou": 1.0,
+      "pose_confidence": 0.25,
+      "risk_score": 0.263,
+      "matched": true
+    },
+    {
+      "image": "cfefa887-57f5-4f6c-b97a-c594335e955d.jpg",
+      "victim_id": 1,
+      "gt_pose": "sitting",
+      "pred_pose": "standing",
+      "gt_priority": "MEDIUM",
+      "pred_priority": "LOW",
+      "iou": 1.0,
+      "pose_confidence": 0.25,
+      "risk_score": 0.503,
+      "matched": true
+    },
+    {
+      "image": "cfefa887-57f5-4f6c-b97a-c594335e955d.jpg",
+      "victim_id": 2,
+      "gt_pose": "standing",
+      "pred_pose": "standing",
+      "gt_priority": "LOW",
+      "pred_priority": "LOW",
+      "iou": 1.0,
+      "pose_confidence": 0.25,
+      "risk_score": 0.267,
+      "matched": true
+    },
+    {
+      "image": "cfefa887-57f5-4f6c-b97a-c594335e955d.jpg",
+      "victim_id": 3,
+      "gt_pose": "standing",
+      "pred_pose": "standing",
+      "gt_priority": "LOW",
+      "pred_priority": "LOW",
+      "iou": 1.0,
+      "pose_confidence": 0.25,
+      "risk_score": 0.632,
+      "matched": true
+    },
+    {
+      "image": "cfefa887-57f5-4f6c-b97a-c594335e955d.jpg",
+      "victim_id": 4,
+      "gt_pose": "sitting",
+      "pred_pose": "sitting",
+      "gt_priority": "MEDIUM",
+      "pred_priority": "MEDIUM",
+      "iou": 1.0,
+      "pose_confidence": 0.25,
+      "risk_score": 0.864,
+      "matched": true
+    },
+    {
+      "image": "cfefa887-57f5-4f6c-b97a-c594335e955d.jpg",
+      "victim_id": 5,
+      "gt_pose": "sitting",
+      "pred_pose": "standing",
+      "gt_priority": "MEDIUM",
+      "pred_priority": "LOW",
+      "iou": 1.0,
+      "pose_confidence": 0.25,
+      "risk_score": 0.426,
+      "matched": true
+    },
+    {
+      "image": "cfefa887-57f5-4f6c-b97a-c594335e955d.jpg",
+      "victim_id": 6,
+      "gt_pose": "lying",
+      "pred_pose": "sitting",
+      "gt_priority": "HIGH",
+      "pred_priority": "MEDIUM",
+      "iou": 1.0,
+      "pose_confidence": 0.25,
+      "risk_score": 0.823,
+      "matched": true
+    },
+    {
+      "image": "cfefa887-57f5-4f6c-b97a-c594335e955d.jpg",
+      "victim_id": 7,
+      "gt_pose": "standing",
+      "pred_pose": "standing",
+      "gt_priority": "LOW",
+      "pred_priority": "LOW",
+      "iou": 1.0,
+      "pose_confidence": 0.25,
+      "risk_score": 0.575,
+      "matched": true
+    },
+    {
+      "image": "cfefa887-57f5-4f6c-b97a-c594335e955d.jpg",
+      "victim_id": 8,
+      "gt_pose": "lying",
+      "pred_pose": "lying",
+      "gt_priority": "HIGH",
+      "pred_priority": "HIGH",
+      "iou": 1.0,
+      "pose_confidence": 0.25,
+      "risk_score": 1.0,
+      "matched": true
+    }
+  ]
+}

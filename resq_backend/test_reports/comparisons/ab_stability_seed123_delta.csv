@@ -1,0 +1,5 @@
+augmentation,baseline_match_rate,baseline_pose_agreement,baseline_pose_flip_rate,baseline_priority_agreement,baseline_priority_flip_rate,finetuned_match_rate,finetuned_pose_agreement,finetuned_pose_flip_rate,finetuned_priority_agreement,finetuned_priority_flip_rate,delta_match_rate,delta_pose_agreement,delta_pose_flip_rate,delta_priority_agreement,delta_priority_flip_rate
+gaussian_blur,0.8028,0.9649,0.0351,0.7368,0.2632,0.8961,0.9275,0.0725,0.9275,0.0725,0.0933,-0.0374,0.0374,0.1907,-0.1907
+gaussian_noise,0.5915,0.9762,0.0238,0.8095,0.1905,0.0519,1.0,0.0,1.0,0.0,-0.5396,0.0238,-0.0238,0.1905,-0.1905
+low_light,0.7324,1.0,0.0,0.9231,0.0769,0.4026,0.871,0.129,0.871,0.129,-0.3298,-0.129,0.129,-0.0521,0.0521
+motion_blur,0.7183,0.902,0.098,0.7255,0.2745,0.2857,0.9091,0.0909,0.9091,0.0909,-0.4326,0.0071,-0.0071,0.1836,-0.1836

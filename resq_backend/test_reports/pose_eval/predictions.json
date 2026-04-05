@@ -1,0 +1,1244 @@
+[
+  {
+    "id": 1,
+    "confidence": 0.302,
+    "bbox_xyxy": [
+      1135,
+      616,
+      1190,
+      678
+    ],
+    "center": [
+      1162,
+      647
+    ],
+    "area": 3410,
+    "aspect_ratio": 0.887,
+    "pose": "sitting",
+    "pose_confidence": 0.25,
+    "bleeding": false,
+    "bleeding_confidence": 0.402,
+    "risk_score": 0.98,
+    "priority": "MEDIUM",
+    "grid": [
+      8,
+      8
+    ],
+    "image_name": "606dd9ab-d68d-45ee-a5dc-3adb97296744.jpg"
+  },
+  {
+    "id": 0,
+    "confidence": 0.906,
+    "bbox_xyxy": [
+      450,
+      143,
+      555,
+      461
+    ],
+    "center": [
+      502,
+      302
+    ],
+    "area": 33390,
+    "aspect_ratio": 0.33,
+    "pose": "standing",
+    "pose_confidence": 0.25,
+    "bleeding": false,
+    "bleeding_confidence": 0.552,
+    "risk_score": 0.189,
+    "priority": "LOW",
+    "grid": [
+      3,
+      3
+    ],
+    "image_name": "844c75ae-a70e-4696-9fd5-9bb1b03b8b49.jpg"
+  },
+  {
+    "id": 1,
+    "confidence": 0.901,
+    "bbox_xyxy": [
+      566,
+      164,
+      666,
+      446
+    ],
+    "center": [
+      616,
+      305
+    ],
+    "area": 28200,
+    "aspect_ratio": 0.355,
+    "pose": "standing",
+    "pose_confidence": 0.25,
+    "bleeding": false,
+    "bleeding_confidence": 0.669,
+    "risk_score": 0.585,
+    "priority": "LOW",
+    "grid": [
+      3,
+      4
+    ],
+    "image_name": "844c75ae-a70e-4696-9fd5-9bb1b03b8b49.jpg"
+  },
+  {
+    "id": 2,
+    "confidence": 0.897,
+    "bbox_xyxy": [
+      661,
+      136,
+      764,
+      461
+    ],
+    "center": [
+      712,
+      298
+    ],
+    "area": 33475,
+    "aspect_ratio": 0.317,
+    "pose": "standing",
+    "pose_confidence": 0.25,
+    "bleeding": false,
+    "bleeding_confidence": 0.649,
+    "risk_score": 0.19,
+    "priority": "LOW",
+    "grid": [
+      3,
+      5
+    ],
+    "image_name": "844c75ae-a70e-4696-9fd5-9bb1b03b8b49.jpg"
+  },
+  {
+    "id": 3,
+    "confidence": 0.866,
+    "bbox_xyxy": [
+      877,
+      360,
+      1189,
+      468
+    ],
+    "center": [
+      1033,
+      414
+    ],
+    "area": 33696,
+    "aspect_ratio": 2.889,
+    "pose": "lying",
+    "pose_confidence": 0.25,
+    "bleeding": false,
+    "bleeding_confidence": 0.196,
+    "risk_score": 0.92,
+    "priority": "HIGH",
+    "grid": [
+      5,
+      7
+    ],
+    "image_name": "844c75ae-a70e-4696-9fd5-9bb1b03b8b49.jpg"
+  },
+  {
+    "id": 4,
+    "confidence": 0.62,
+    "bbox_xyxy": [
+      862,
+      479,
+      1371,
+      650
+    ],
+    "center": [
+      1116,
+      564
+    ],
+    "area": 87039,
+    "aspect_ratio": 2.977,
+    "pose": "lying",
+    "pose_confidence": 0.25,
+    "bleeding": false,
+    "bleeding_confidence": 0.3,
+    "risk_score": 0.957,
+    "priority": "HIGH",
+    "grid": [
+      7,
+      7
+    ],
+    "image_name": "844c75ae-a70e-4696-9fd5-9bb1b03b8b49.jpg"
+  },
+  {
+    "id": 5,
+    "confidence": 0.281,
+    "bbox_xyxy": [
+      627,
+      162,
+      676,
+      376
+    ],
+    "center": [
+      651,
+      269
+    ],
+    "area": 10486,
+    "aspect_ratio": 0.229,
+    "pose": "standing",
+    "pose_confidence": 0.25,
+    "bleeding": false,
+    "bleeding_confidence": 0.678,
+    "risk_score": 0.433,
+    "priority": "LOW",
+    "grid": [
+      3,
+      4
+    ],
+    "image_name": "844c75ae-a70e-4696-9fd5-9bb1b03b8b49.jpg"
+  },
+  {
+    "id": 0,
+    "confidence": 0.917,
+    "bbox_xyxy": [
+      1078,
+      458,
+      1150,
+      587
+    ],
+    "center": [
+      1114,
+      522
+    ],
+    "area": 9288,
+    "aspect_ratio": 0.558,
+    "pose": "standing",
+    "pose_confidence": 0.25,
+    "bleeding": true,
+    "bleeding_confidence": 0.575,
+    "risk_score": 0.263,
+    "priority": "LOW",
+    "grid": [
+      6,
+      7
+    ],
+    "image_name": "cfefa887-57f5-4f6c-b97a-c594335e955d.jpg"
+  },
+  {
+    "id": 1,
+    "confidence": 0.908,
+    "bbox_xyxy": [
+      1030,
+      444,
+      1100,
+      562
+    ],
+    "center": [
+      1065,
+      503
+    ],
+    "area": 8260,
+    "aspect_ratio": 0.593,
+    "pose": "standing",
+    "pose_confidence": 0.25,
+    "bleeding": true,
+    "bleeding_confidence": 0.53,
+    "risk_score": 0.503,
+    "priority": "LOW",
+    "grid": [
+      6,
+      7
+    ],
+    "image_name": "cfefa887-57f5-4f6c-b97a-c594335e955d.jpg"
+  },
+  {
+    "id": 2,
+    "confidence": 0.878,
+    "bbox_xyxy": [
+      1124,
+      295,
+      1180,
+      404
+    ],
+    "center": [
+      1152,
+      349
+    ],
+    "area": 6104,
+    "aspect_ratio": 0.514,
+    "pose": "standing",
+    "pose_confidence": 0.25,
+    "bleeding": true,
+    "bleeding_confidence": 0.551,
+    "risk_score": 0.267,
+    "priority": "LOW",
+    "grid": [
+      4,
+      8
+    ],
+    "image_name": "cfefa887-57f5-4f6c-b97a-c594335e955d.jpg"
+  },
+  {
+    "id": 3,
+    "confidence": 0.878,
+    "bbox_xyxy": [
+      1167,
+      300,
+      1213,
+      421
+    ],
+    "center": [
+      1190,
+      360
+    ],
+    "area": 5566,
+    "aspect_ratio": 0.38,
+    "pose": "standing",
+    "pose_confidence": 0.25,
+    "bleeding": true,
+    "bleeding_confidence": 0.523,
+    "risk_score": 0.632,
+    "priority": "LOW",
+    "grid": [
+      4,
+      8
+    ],
+    "image_name": "cfefa887-57f5-4f6c-b97a-c594335e955d.jpg"
+  },
+  {
+    "id": 4,
+    "confidence": 0.696,
+    "bbox_xyxy": [
+      790,
+      518,
+      860,
+      598
+    ],
+    "center": [
+      825,
+      558
+    ],
+    "area": 5600,
+    "aspect_ratio": 0.875,
+    "pose": "sitting",
+    "pose_confidence": 0.25,
+    "bleeding": false,
+    "bleeding_confidence": 0.032,
+    "risk_score": 0.864,
+    "priority": "MEDIUM",
+    "grid": [
+      7,
+      5
+    ],
+    "image_name": "cfefa887-57f5-4f6c-b97a-c594335e955d.jpg"
+  },
+  {
+    "id": 5,
+    "confidence": 0.376,
+    "bbox_xyxy": [
+      841,
+      506,
+      898,
+      601
+    ],
+    "center": [
+      869,
+      553
+    ],
+    "area": 5415,
+    "aspect_ratio": 0.6,
+    "pose": "standing",
+    "pose_confidence": 0.25,
+    "bleeding": false,
+    "bleeding_confidence": 0.275,
+    "risk_score": 0.426,
+    "priority": "LOW",
+    "grid": [
+      7,
+      6
+    ],
+    "image_name": "cfefa887-57f5-4f6c-b97a-c594335e955d.jpg"
+  },
+  {
+    "id": 6,
+    "confidence": 0.347,
+    "bbox_xyxy": [
+      536,
+      493,
+      614,
+      566
+    ],
+    "center": [
+      575,
+      529
+    ],
+    "area": 5694,
+    "aspect_ratio": 1.068,
+    "pose": "sitting",
+    "pose_confidence": 0.25,
+    "bleeding": false,
+    "bleeding_confidence": 0.025,
+    "risk_score": 0.823,
+    "priority": "MEDIUM",
+    "grid": [
+      6,
+      4
+    ],
+    "image_name": "cfefa887-57f5-4f6c-b97a-c594335e955d.jpg"
+  },
+  {
+    "id": 7,
+    "confidence": 0.335,
+    "bbox_xyxy": [
+      624,
+      372,
+      663,
+      446
+    ],
+    "center": [
+      643,
+      409
+    ],
+    "area": 2886,
+    "aspect_ratio": 0.527,
+    "pose": "standing",
+    "pose_confidence": 0.25,
+    "bleeding": true,
+    "bleeding_confidence": 0.548,
+    "risk_score": 0.575,
+    "priority": "LOW",
+    "grid": [
+      5,
+      4
+    ],
+    "image_name": "cfefa887-57f5-4f6c-b97a-c594335e955d.jpg"
+  },
+  {
+    "id": 8,
+    "confidence": 0.288,
+    "bbox_xyxy": [
+      502,
+      486,
+      590,
+      537
+    ],
+    "center": [
+      546,
+      511
+    ],
+    "area": 4488,
+    "aspect_ratio": 1.725,
+    "pose": "lying",
+    "pose_confidence": 0.25,
+    "bleeding": true,
+    "bleeding_confidence": 0.532,
+    "risk_score": 1.0,
+    "priority": "HIGH",
+    "grid": [
+      6,
+      3
+    ],
+    "image_name": "cfefa887-57f5-4f6c-b97a-c594335e955d.jpg"
+  },
+  {
+    "id": 0,
+    "confidence": 0.933,
+    "bbox_xyxy": [
+      1475,
+      2394,
+      1633,
+      2741
+    ],
+    "center": [
+      1554,
+      2567
+    ],
+    "area": 54826,
+    "aspect_ratio": 0.455,
+    "pose": "standing",
+    "pose_confidence": 0.25,
+    "bleeding": true,
+    "bleeding_confidence": 0.567,
+    "risk_score": 0.287,
+    "priority": "LOW",
+    "grid": [
+      6,
+      7
+    ],
+    "image_name": "IMG_9673.JPG.jpeg"
+  },
+  {
+    "id": 1,
+    "confidence": 0.906,
+    "bbox_xyxy": [
+      809,
+      2363,
+      936,
+      2665
+    ],
+    "center": [
+      872,
+      2514
+    ],
+    "area": 38354,
+    "aspect_ratio": 0.421,
+    "pose": "standing",
+    "pose_confidence": 0.25,
+    "bleeding": true,
+    "bleeding_confidence": 0.566,
+    "risk_score": 0.499,
+    "priority": "LOW",
+    "grid": [
+      6,
+      4
+    ],
+    "image_name": "IMG_9673.JPG.jpeg"
+  },
+  {
+    "id": 2,
+    "confidence": 0.898,
+    "bbox_xyxy": [
+      647,
+      1675,
+      803,
+      1971
+    ],
+    "center": [
+      725,
+      1823
+    ],
+    "area": 46176,
+    "aspect_ratio": 0.527,
+    "pose": "standing",
+    "pose_confidence": 0.25,
+    "bleeding": false,
+    "bleeding_confidence": 0.035,
+    "risk_score": 0.291,
+    "priority": "LOW",
+    "grid": [
+      4,
+      3
+    ],
+    "image_name": "IMG_9673.JPG.jpeg"
+  },
+  {
+    "id": 3,
+    "confidence": 0.871,
+    "bbox_xyxy": [
+      548,
+      1573,
+      639,
+      1880
+    ],
+    "center": [
+      593,
+      1726
+    ],
+    "area": 27937,
+    "aspect_ratio": 0.296,
+    "pose": "standing",
+    "pose_confidence": 0.25,
+    "bleeding": false,
+    "bleeding_confidence": 0.013,
+    "risk_score": 0.586,
+    "priority": "LOW",
+    "grid": [
+      4,
+      2
+    ],
+    "image_name": "IMG_9673.JPG.jpeg"
+  },
+  {
+    "id": 4,
+    "confidence": 0.822,
+    "bbox_xyxy": [
+      63,
+      1762,
+      160,
+      2018
+    ],
+    "center": [
+      111,
+      1890
+    ],
+    "area": 24832,
+    "aspect_ratio": 0.379,
+    "pose": "standing",
+    "pose_confidence": 0.25,
+    "bleeding": false,
+    "bleeding_confidence": 0.018,
+    "risk_score": 0.743,
+    "priority": "LOW",
+    "grid": [
+      4,
+      0
+    ],
+    "image_name": "IMG_9673.JPG.jpeg"
+  },
+  {
+    "id": 5,
+    "confidence": 0.79,
+    "bbox_xyxy": [
+      1543,
+      984,
+      1631,
+      1183
+    ],
+    "center": [
+      1587,
+      1083
+    ],
+    "area": 17512,
+    "aspect_ratio": 0.442,
+    "pose": "standing",
+    "pose_confidence": 0.25,
+    "bleeding": false,
+    "bleeding_confidence": 0.0,
+    "risk_score": 0.453,
+    "priority": "LOW",
+    "grid": [
+      2,
+      7
+    ],
+    "image_name": "IMG_9673.JPG.jpeg"
+  },
+  {
+    "id": 6,
+    "confidence": 0.767,
+    "bbox_xyxy": [
+      780,
+      1634,
+      855,
+      1891
+    ],
+    "center": [
+      817,
+      1762
+    ],
+    "area": 19275,
+    "aspect_ratio": 0.292,
+    "pose": "standing",
+    "pose_confidence": 0.25,
+    "bleeding": false,
+    "bleeding_confidence": 0.024,
+    "risk_score": 0.666,
+    "priority": "LOW",
+    "grid": [
+      4,
+      3
+    ],
+    "image_name": "IMG_9673.JPG.jpeg"
+  },
+  {
+    "id": 7,
+    "confidence": 0.758,
+    "bbox_xyxy": [
+      1604,
+      968,
+      1679,
+      1196
+    ],
+    "center": [
+      1641,
+      1082
+    ],
+    "area": 17100,
+    "aspect_ratio": 0.329,
+    "pose": "standing",
+    "pose_confidence": 0.25,
+    "bleeding": false,
+    "bleeding_confidence": 0.0,
+    "risk_score": 0.543,
+    "priority": "LOW",
+    "grid": [
+      2,
+      7
+    ],
+    "image_name": "IMG_9673.JPG.jpeg"
+  },
+  {
+    "id": 8,
+    "confidence": 0.122,
+    "bbox_xyxy": [
+      1488,
+      953,
+      1555,
+      1079
+    ],
+    "center": [
+      1521,
+      1016
+    ],
+    "area": 8442,
+    "aspect_ratio": 0.532,
+    "pose": "standing",
+    "pose_confidence": 0.25,
+    "bleeding": false,
+    "bleeding_confidence": 0.0,
+    "risk_score": 0.803,
+    "priority": "LOW",
+    "grid": [
+      2,
+      7
+    ],
+    "image_name": "IMG_9673.JPG.jpeg"
+  },
+  {
+    "id": 0,
+    "confidence": 0.825,
+    "bbox_xyxy": [
+      1183,
+      2045,
+      1264,
+      2209
+    ],
+    "center": [
+      1223,
+      2127
+    ],
+    "area": 13284,
+    "aspect_ratio": 0.494,
+    "pose": "standing",
+    "pose_confidence": 0.25,
+    "bleeding": false,
+    "bleeding_confidence": 0.016,
+    "risk_score": 0.341,
+    "priority": "LOW",
+    "grid": [
+      5,
+      5
+    ],
+    "image_name": "IMG_9680.JPG.jpeg"
+  },
+  {
+    "id": 1,
+    "confidence": 0.804,
+    "bbox_xyxy": [
+      913,
+      1565,
+      977,
+      1742
+    ],
+    "center": [
+      945,
+      1653
+    ],
+    "area": 11328,
+    "aspect_ratio": 0.362,
+    "pose": "standing",
+    "pose_confidence": 0.25,
+    "bleeding": false,
+    "bleeding_confidence": 0.0,
+    "risk_score": 0.5,
+    "priority": "LOW",
+    "grid": [
+      4,
+      4
+    ],
+    "image_name": "IMG_9680.JPG.jpeg"
+  },
+  {
+    "id": 2,
+    "confidence": 0.737,
+    "bbox_xyxy": [
+      978,
+      1728,
+      1071,
+      1876
+    ],
+    "center": [
+      1024,
+      1802
+    ],
+    "area": 13764,
+    "aspect_ratio": 0.628,
+    "pose": "standing",
+    "pose_confidence": 0.25,
+    "bleeding": false,
+    "bleeding_confidence": 0.0,
+    "risk_score": 0.347,
+    "priority": "LOW",
+    "grid": [
+      4,
+      4
+    ],
+    "image_name": "IMG_9680.JPG.jpeg"
+  },
+  {
+    "id": 3,
+    "confidence": 0.679,
+    "bbox_xyxy": [
+      1066,
+      2034,
+      1136,
+      2198
+    ],
+    "center": [
+      1101,
+      2116
+    ],
+    "area": 11480,
+    "aspect_ratio": 0.427,
+    "pose": "standing",
+    "pose_confidence": 0.25,
+    "bleeding": true,
+    "bleeding_confidence": 0.529,
+    "risk_score": 0.57,
+    "priority": "LOW",
+    "grid": [
+      5,
+      5
+    ],
+    "image_name": "IMG_9680.JPG.jpeg"
+  },
+  {
+    "id": 4,
+    "confidence": 0.643,
+    "bbox_xyxy": [
+      1967,
+      2207,
+      2092,
+      2371
+    ],
+    "center": [
+      2029,
+      2289
+    ],
+    "area": 20500,
+    "aspect_ratio": 0.762,
+    "pose": "sitting",
+    "pose_confidence": 0.25,
+    "bleeding": false,
+    "bleeding_confidence": 0.003,
+    "risk_score": 0.789,
+    "priority": "MEDIUM",
+    "grid": [
+      5,
+      9
+    ],
+    "image_name": "IMG_9680.JPG.jpeg"
+  },
+  {
+    "id": 5,
+    "confidence": 0.496,
+    "bbox_xyxy": [
+      1110,
+      1792,
+      1171,
+      1940
+    ],
+    "center": [
+      1140,
+      1866
+    ],
+    "area": 9028,
+    "aspect_ratio": 0.412,
+    "pose": "standing",
+    "pose_confidence": 0.25,
+    "bleeding": false,
+    "bleeding_confidence": 0.003,
+    "risk_score": 0.477,
+    "priority": "LOW",
+    "grid": [
+      4,
+      5
+    ],
+    "image_name": "IMG_9680.JPG.jpeg"
+  },
+  {
+    "id": 6,
+    "confidence": 0.488,
+    "bbox_xyxy": [
+      1137,
+      1954,
+      1215,
+      2104
+    ],
+    "center": [
+      1176,
+      2029
+    ],
+    "area": 11700,
+    "aspect_ratio": 0.52,
+    "pose": "standing",
+    "pose_confidence": 0.25,
+    "bleeding": true,
+    "bleeding_confidence": 0.596,
+    "risk_score": 0.628,
+    "priority": "LOW",
+    "grid": [
+      5,
+      5
+    ],
+    "image_name": "IMG_9680.JPG.jpeg"
+  },
+  {
+    "id": 7,
+    "confidence": 0.355,
+    "bbox_xyxy": [
+      658,
+      1596,
+      713,
+      1741
+    ],
+    "center": [
+      685,
+      1668
+    ],
+    "area": 7975,
+    "aspect_ratio": 0.379,
+    "pose": "standing",
+    "pose_confidence": 0.25,
+    "bleeding": false,
+    "bleeding_confidence": 0.0,
+    "risk_score": 0.553,
+    "priority": "LOW",
+    "grid": [
+      4,
+      3
+    ],
+    "image_name": "IMG_9680.JPG.jpeg"
+  },
+  {
+    "id": 8,
+    "confidence": 0.179,
+    "bbox_xyxy": [
+      1096,
+      1963,
+      1153,
+      2098
+    ],
+    "center": [
+      1124,
+      2030
+    ],
+    "area": 7695,
+    "aspect_ratio": 0.422,
+    "pose": "standing",
+    "pose_confidence": 0.25,
+    "bleeding": true,
+    "bleeding_confidence": 0.59,
+    "risk_score": 0.735,
+    "priority": "LOW",
+    "grid": [
+      5,
+      5
+    ],
+    "image_name": "IMG_9680.JPG.jpeg"
+  },
+  {
+    "id": 9,
+    "confidence": 0.168,
+    "bbox_xyxy": [
+      1401,
+      1203,
+      1488,
+      1373
+    ],
+    "center": [
+      1444,
+      1288
+    ],
+    "area": 14790,
+    "aspect_ratio": 0.512,
+    "pose": "standing",
+    "pose_confidence": 0.25,
+    "bleeding": false,
+    "bleeding_confidence": 0.0,
+    "risk_score": 0.6,
+    "priority": "LOW",
+    "grid": [
+      3,
+      6
+    ],
+    "image_name": "IMG_9680.JPG.jpeg"
+  },
+  {
+    "id": 0,
+    "confidence": 0.905,
+    "bbox_xyxy": [
+      799,
+      1458,
+      920,
+      1809
+    ],
+    "center": [
+      859,
+      1633
+    ],
+    "area": 42471,
+    "aspect_ratio": 0.345,
+    "pose": "standing",
+    "pose_confidence": 0.25,
+    "bleeding": false,
+    "bleeding_confidence": 0.037,
+    "risk_score": 0.34,
+    "priority": "LOW",
+    "grid": [
+      4,
+      3
+    ],
+    "image_name": "IMG_9683.JPG.jpeg"
+  },
+  {
+    "id": 1,
+    "confidence": 0.893,
+    "bbox_xyxy": [
+      298,
+      1526,
+      405,
+      1810
+    ],
+    "center": [
+      351,
+      1668
+    ],
+    "area": 30388,
+    "aspect_ratio": 0.377,
+    "pose": "standing",
+    "pose_confidence": 0.25,
+    "bleeding": false,
+    "bleeding_confidence": 0.001,
+    "risk_score": 0.499,
+    "priority": "LOW",
+    "grid": [
+      4,
+      1
+    ],
+    "image_name": "IMG_9683.JPG.jpeg"
+  },
+  {
+    "id": 2,
+    "confidence": 0.884,
+    "bbox_xyxy": [
+      1333,
+      2428,
+      1494,
+      2760
+    ],
+    "center": [
+      1413,
+      2594
+    ],
+    "area": 53452,
+    "aspect_ratio": 0.485,
+    "pose": "standing",
+    "pose_confidence": 0.25,
+    "bleeding": true,
+    "bleeding_confidence": 0.57,
+    "risk_score": 0.346,
+    "priority": "LOW",
+    "grid": [
+      6,
+      6
+    ],
+    "image_name": "IMG_9683.JPG.jpeg"
+  },
+  {
+    "id": 3,
+    "confidence": 0.881,
+    "bbox_xyxy": [
+      955,
+      2890,
+      1106,
+      3291
+    ],
+    "center": [
+      1030,
+      3090
+    ],
+    "area": 60551,
+    "aspect_ratio": 0.377,
+    "pose": "standing",
+    "pose_confidence": 0.25,
+    "bleeding": true,
+    "bleeding_confidence": 0.549,
+    "risk_score": 0.525,
+    "priority": "LOW",
+    "grid": [
+      8,
+      4
+    ],
+    "image_name": "IMG_9683.JPG.jpeg"
+  },
+  {
+    "id": 4,
+    "confidence": 0.879,
+    "bbox_xyxy": [
+      1292,
+      2231,
+      1441,
+      2590
+    ],
+    "center": [
+      1366,
+      2410
+    ],
+    "area": 53491,
+    "aspect_ratio": 0.415,
+    "pose": "standing",
+    "pose_confidence": 0.25,
+    "bleeding": true,
+    "bleeding_confidence": 0.556,
+    "risk_score": 0.7,
+    "priority": "LOW",
+    "grid": [
+      6,
+      6
+    ],
+    "image_name": "IMG_9683.JPG.jpeg"
+  },
+  {
+    "id": 5,
+    "confidence": 0.819,
+    "bbox_xyxy": [
+      1085,
+      2085,
+      1257,
+      2428
+    ],
+    "center": [
+      1171,
+      2256
+    ],
+    "area": 58996,
+    "aspect_ratio": 0.501,
+    "pose": "standing",
+    "pose_confidence": 0.25,
+    "bleeding": true,
+    "bleeding_confidence": 0.535,
+    "risk_score": 0.452,
+    "priority": "LOW",
+    "grid": [
+      5,
+      5
+    ],
+    "image_name": "IMG_9683.JPG.jpeg"
+  },
+  {
+    "id": 6,
+    "confidence": 0.784,
+    "bbox_xyxy": [
+      1733,
+      791,
+      1829,
+      1034
+    ],
+    "center": [
+      1781,
+      912
+    ],
+    "area": 23328,
+    "aspect_ratio": 0.395,
+    "pose": "standing",
+    "pose_confidence": 0.25,
+    "bleeding": false,
+    "bleeding_confidence": 0.0,
+    "risk_score": 0.598,
+    "priority": "LOW",
+    "grid": [
+      2,
+      8
+    ],
+    "image_name": "IMG_9683.JPG.jpeg"
+  },
+  {
+    "id": 7,
+    "confidence": 0.468,
+    "bbox_xyxy": [
+      1079,
+      1996,
+      1262,
+      2267
+    ],
+    "center": [
+      1170,
+      2131
+    ],
+    "area": 49593,
+    "aspect_ratio": 0.675,
+    "pose": "standing",
+    "pose_confidence": 0.25,
+    "bleeding": true,
+    "bleeding_confidence": 0.616,
+    "risk_score": 0.516,
+    "priority": "LOW",
+    "grid": [
+      5,
+      5
+    ],
+    "image_name": "IMG_9683.JPG.jpeg"
+  },
+  {
+    "id": 8,
+    "confidence": 0.263,
+    "bbox_xyxy": [
+      1643,
+      761,
+      1740,
+      956
+    ],
+    "center": [
+      1691,
+      858
+    ],
+    "area": 18915,
+    "aspect_ratio": 0.497,
+    "pose": "standing",
+    "pose_confidence": 0.25,
+    "bleeding": false,
+    "bleeding_confidence": 0.0,
+    "risk_score": 0.698,
+    "priority": "LOW",
+    "grid": [
+      2,
+      7
+    ],
+    "image_name": "IMG_9683.JPG.jpeg"
+  },
+  {
+    "id": 0,
+    "confidence": 0.751,
+    "bbox_xyxy": [
+      910,
+      1491,
+      1407,
+      2267
+    ],
+    "center": [
+      1158,
+      1879
+    ],
+    "area": 385672,
+    "aspect_ratio": 0.64,
+    "pose": "standing",
+    "pose_confidence": 0.25,
+    "bleeding": false,
+    "bleeding_confidence": 0.325,
+    "risk_score": 0.319,
+    "priority": "LOW",
+    "grid": [
+      4,
+      5
+    ],
+    "image_name": "IMG_9689.JPG.jpeg"
+  },
+  {
+    "id": 1,
+    "confidence": 0.587,
+    "bbox_xyxy": [
+      249,
+      1225,
+      1298,
+      1766
+    ],
+    "center": [
+      773,
+      1495
+    ],
+    "area": 567509,
+    "aspect_ratio": 1.939,
+    "pose": "lying",
+    "pose_confidence": 0.25,
+    "bleeding": true,
+    "bleeding_confidence": 0.687,
+    "risk_score": 0.565,
+    "priority": "HIGH",
+    "grid": [
+      3,
+      3
+    ],
+    "image_name": "IMG_9689.JPG.jpeg"
+  }
+]

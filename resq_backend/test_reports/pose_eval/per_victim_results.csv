@@ -1,0 +1,17 @@
+image,victim_id,gt_pose,pred_pose,pose_correct,gt_priority,pred_priority,priority_correct,iou,pose_confidence,risk_score
+606dd9ab-d68d-45ee-a5dc-3adb97296744.jpg,0,sitting,sitting,True,MEDIUM,MEDIUM,True,1.0,0.25,0.98
+844c75ae-a70e-4696-9fd5-9bb1b03b8b49.jpg,0,standing,standing,True,LOW,LOW,True,1.0,0.25,0.189
+844c75ae-a70e-4696-9fd5-9bb1b03b8b49.jpg,1,standing,standing,True,LOW,LOW,True,1.0,0.25,0.585
+844c75ae-a70e-4696-9fd5-9bb1b03b8b49.jpg,2,standing,standing,True,LOW,LOW,True,1.0,0.25,0.19
+844c75ae-a70e-4696-9fd5-9bb1b03b8b49.jpg,3,lying,lying,True,HIGH,HIGH,True,1.0,0.25,0.92
+844c75ae-a70e-4696-9fd5-9bb1b03b8b49.jpg,4,lying,lying,True,HIGH,HIGH,True,1.0,0.25,0.957
+844c75ae-a70e-4696-9fd5-9bb1b03b8b49.jpg,5,standing,standing,True,LOW,LOW,True,1.0,0.25,0.433
+cfefa887-57f5-4f6c-b97a-c594335e955d.jpg,0,sitting,standing,False,MEDIUM,LOW,False,1.0,0.25,0.263
+cfefa887-57f5-4f6c-b97a-c594335e955d.jpg,1,sitting,standing,False,MEDIUM,LOW,False,1.0,0.25,0.503
+cfefa887-57f5-4f6c-b97a-c594335e955d.jpg,2,standing,standing,True,LOW,LOW,True,1.0,0.25,0.267
+cfefa887-57f5-4f6c-b97a-c594335e955d.jpg,3,standing,standing,True,LOW,LOW,True,1.0,0.25,0.632
+cfefa887-57f5-4f6c-b97a-c594335e955d.jpg,4,sitting,sitting,True,MEDIUM,MEDIUM,True,1.0,0.25,0.864
+cfefa887-57f5-4f6c-b97a-c594335e955d.jpg,5,sitting,standing,False,MEDIUM,LOW,False,1.0,0.25,0.426
+cfefa887-57f5-4f6c-b97a-c594335e955d.jpg,6,lying,sitting,False,HIGH,MEDIUM,False,1.0,0.25,0.823
+cfefa887-57f5-4f6c-b97a-c594335e955d.jpg,7,standing,standing,True,LOW,LOW,True,1.0,0.25,0.575
+cfefa887-57f5-4f6c-b97a-c594335e955d.jpg,8,lying,lying,True,HIGH,HIGH,True,1.0,0.25,1.0

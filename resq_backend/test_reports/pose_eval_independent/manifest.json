@@ -1,0 +1,18 @@
+{
+  "dataset_images_total": 1144,
+  "images_scanned": 882,
+  "images_with_selected_victims": 375,
+  "victims_collected": 500,
+  "target_victims": 500,
+  "seed": 42,
+  "paths": {
+    "crops_dir": "D:\\PROJECTS\\ResQ\\resq_backend\\test_reports\\pose_eval_independent\\crops",
+    "ground_truth_blind": "D:\\PROJECTS\\ResQ\\resq_backend\\test_reports\\pose_eval_independent\\ground_truth_blind.json",
+    "pred_reference_hidden": "D:\\PROJECTS\\ResQ\\resq_backend\\test_reports\\pose_eval_independent\\pred_reference_hidden.json"
+  },
+  "annotation_instructions": [
+    "Fill gt_pose with one of: standing, sitting, lying.",
+    "Fill gt_priority with one of: LOW, MEDIUM, HIGH.",
+    "Do not open pred_reference_hidden.json until after labeling is complete."
+  ]
+}
